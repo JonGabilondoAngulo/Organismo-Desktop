@@ -1,0 +1,12 @@
+.list-group {
+    padding-left: 0;
+    margin-bottom: 1px;
+}
+.list-group-item {
+    position: relative;
+    display: block;
+    padding: 1px 11px;
+    margin-bottom: -1px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+}
