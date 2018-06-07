@@ -1,6 +1,4 @@
-# Organismo-Web
-
-Guide: https://github.com/JonGabilondoAngulo/Organismo-Web/wiki
+# Organismo-Desktop
 
 
 UI Exploration
