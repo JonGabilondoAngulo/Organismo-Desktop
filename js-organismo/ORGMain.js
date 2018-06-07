@@ -23,7 +23,7 @@ ORG.fontLoader.load( 'js-third-party/three.js/examples/fonts/helvetiker_regular.
     // Resize splitter
     ORG.SplitterResize(document.getElementById('org-splitter'), ORG.contentWrapper, ORG.leftSection, ORG.rightSection, ORG.scene);
 
-    google.charts.load('current', {'packages' : ['columnchart']});
+    //google.charts.load('current', {'packages' : ['columnchart']});
     //google.charts.setOnLoadCallback(function() { sendAndDraw('') });
 
     // System Info manager
@@ -34,7 +34,7 @@ ORG.fontLoader.load( 'js-third-party/three.js/examples/fonts/helvetiker_regular.
     ORG.UIJSONTreeContextMenuManager = new ORGUITreeContextMenuManager('#ui-json-tree');
 
     // Install handler for Window Resize
-    var resizer = ORG.WindowResize( ORG.scene.THREERenderer, ORG.scene.THREECamera, ORG.canvasDomElem, ORG.contentWrapper, ORG.leftSection, ORG.rightSection);
+    let resizer = ORG.WindowResize( ORG.scene.THREERenderer, ORG.scene.THREECamera, ORG.canvasDomElem, ORG.contentWrapper, ORG.leftSection, ORG.rightSection);
     resizer.resize();
 
 } );

@@ -9,42 +9,32 @@
     <link rel="stylesheet" type="text/css" href="css/style.css"/>
     <link rel="stylesheet" type="text/css" href="css/navigator-bar.css"/>
     <link rel="stylesheet" type="text/css" href="css/map.css"/>
-
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCEOb3RWpe6hbK1CbkMTZ3hpFQ-cdVbfkI&libraries=places&callback="></script>
-
-    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-    <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.js"></script>
-    <script src="js-third-party/flux/dist/Flux.js"></script>
-    <script src="js-third-party/flux/dist/FluxUtils.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="node_modules/bootstrap/dist/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" type="text/css" href="node_modules/jquery-contextmenu/dist/jquery.contextMenu.min.css">
+    <link rel="stylesheet" type="text/css" href="css/bootstrap-override.css"/>
+    <link rel="stylesheet" type="text/css" href="css/tooltips2.css"/>
+    <link rel='stylesheet' type="text/css" href='js-third-party/bootstrap-slider/css/bootstrap-slider.min.css'/>
+    <link rel="stylesheet" type="text/css" href="js-third-party/patternfly-bootstrap-treeview/dist/bootstrap-treeview.min.css"/>
 
     <script type="text/javascript">
-        // Change JQueryUI plugin names to fix name collision with Bootstrap.
-        // http://www.ryadel.com/en/using-jquery-ui-bootstrap-togheter-web-page/
-        $.widget.bridge('uitooltip', $.ui.tooltip);
-        $.widget.bridge('uibutton', $.ui.button);
+        //$ = jQuery = require('jquery')
+        //require('jquery-ui-dist/jquery-ui.min.js')
+        //
+        //// Change JQueryUI plugin names to fix name collision with Bootstrap.
+        //$.widget.bridge('uitooltip', $.ui.tooltip)
+        //$.widget.bridge('uibutton', $.ui.button)
+
     </script>
 
-    <!-- Bootstrap -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-    <link rel="stylesheet" type="text/css" href="css/bootstrap-override.css"/>
-
-    <link rel="stylesheet" type="text/css" href="css/tooltips2.css"/>
-
-    <link rel="stylesheet" type="text/css" href="./js-third-party/jQuery-contextMenu/dist/jquery.contextMenu.min.css"/>
-    <script type="text/javascript" src="./js-third-party/jQuery-contextMenu/dist/jquery.contextMenu.min.js"></script>
-    <script type="text/javascript" src="./js-third-party/jQuery-contextMenu/dist/jquery.ui.position.min.js"></script>
-
-    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
-    <!--<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCEOb3RWpe6hbK1CbkMTZ3hpFQ-cdVbfkI&libraries=places&callback=initMap""></script>-->
+    <!--<link rel="stylesheet" type="text/css" href="./js-third-party/jQuery-contextMenu/dist/jquery.contextMenu.min.css"/>-->
+    <!--<script type="text/javascript" src="./js-third-party/jQuery-contextMenu/dist/jquery.contextMenu.min.js"></script>-->
+    <!--<script type="text/javascript" src="./js-third-party/jQuery-contextMenu/dist/jquery.ui.position.min.js"></script>-->
 
 </head>
-<body>
 
+<body>
 
 <nav class='mynavbar navbar-inverse'>
     <div class='mynavbar-container'>
@@ -122,9 +112,6 @@
                     <ul class="nav nav-tabs">
                         <li class="active">
                             <a href="#tab-settings" data-toggle="tab">Control</a>
-                        </li>
-                        <li>
-                            <a href="#tab-map" data-toggle="tab">Map</a>
                         </li>
                         <li>
                             <a href="#tab-tree" data-toggle="tab">UI Tree</a>
@@ -255,125 +242,6 @@
 
                             </div>
                         </div>
-                        <div class="tab-pane" id="tab-map">
-                            <input id="pac-input" class="map-controls" type="text" placeholder="Search Box">
-
-                            <div id="map"></div>
-
-                            <!--Create Map on Tab selection-->
-                            <script>
-                                $("a[href='#tab-map']").on('shown.bs.tab', function (e) {
-                                    //console.log('shown - after the tab has been shown');
-                                    if (!ORG.map) {
-                                        ORG.map = new ORGMap();
-                                        ORG.map.addListener( ORG.locationManager );
-                                    }
-                                });
-                            </script>
-
-                            <div id="chart_div" style="width:100%" onmouseout=""></div>
-
-                            <div>
-                                <!--<label type="button" class="btn btn-primary" id="reset-itinerary">Reset</label>-->
-                                <button id='reset-itinerary' class="ui-button ui-widget ui-corner-all not-focusable">Reset</button>
-                                <!--<button id="reset-itinerary" class="btn btn-default">Reset</button>-->
-                                <label class="checkbox-inline"><input type="checkbox" value="true">Autocenter</label>
-                                <span class="location-small-values"><span class="glyphicon glyphicon-road" aria-hidden="true"></span><small id="label-distance"></small> <span class="glyphicon glyphicon-time" aria-hidden="true"></span><small id="label-duration"></small> </span>
-                            </div>
-
-                            <br/>
-
-                                    <!--<label>Distance:</label>&nbsp; &nbsp; <label id="label-distance">&nbsp; &nbsp; </label><br/>-->
-                                    <!--<label>Heading:</label>&nbsp; &nbsp; <label id="label-heading">&nbsp; &nbsp; </label><br/>-->
-                                    <!--<label>Pressure:</label>&nbsp; &nbsp; <label id="label-pressure">&nbsp; &nbsp; </label><br/>-->
-                                    <!--<label>Speed:</label>&nbsp; &nbsp; <label id="label-speed">&nbsp; &nbsp; </label><br/>-->
-                                    <!--<label>Orientation:&nbsp;</label><label id="label-orientation"></label><br/>-->
-                                    <!--<label>Attitude:&nbsp;</label><label id="label-attitude"></label><br/>-->
-
-                            <label for="start-point">Start</label>
-                            <span id='button-send-location' role='button' class="glyphicon glyphicon-phone"></span>
-                            <!--<div id="TrashButton" class="glyphicon glyphicon-phone" style="cursor:pointer"></div>-->
-                            <!--<button class="btn btn-info" type="button"> <span class="glyphicon glyphicon-phone"></span> </button>-->
-
-                            <span class="location-small-values">
-                                <span class="glyphicon glyphicon-screenshot" aria-hidden="true"></span>
-                                <small id="label-lat"></small>  &nbsp;
-                                <small id="label-lng">&nbsp;</small>
-                                <span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>
-                                <small id="label-altitude">&nbsp;</small>
-                            </span>
-                            <input id="start-point" class="form-control" placeholder="Origin" type="text"/>
-
-                            <br/>
-
-                            <label for="end-point">End</label>
-                            <span class="location-small-values">
-                                <span class="glyphicon glyphicon-screenshot" aria-hidden="true"></span>
-                                <small id="label-lat-end"></small>  &nbsp;
-                                <small id="label-lng-end">&nbsp;</small>
-                                <span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>
-                                <small id="label-altitude-end">&nbsp;</small>
-                            </span>
-                            <input id="end-point" class="form-control" placeholder="Destination" type="text"/><br/>
-
-
-                            <div class="btn-group">
-                                <button id="travel-mode-dropdown" type="button" class="btn btn-default" value="DRIVING">Driving</button>
-                                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <span class="caret"></span>
-                                    <span class="sr-only">Toggle Dropdown</span>
-                                </button>
-                                <ul class="dropdown-menu">
-                                    <li><a href="#" data-value="DRIVING">Driving</a></li>
-                                    <li><a href="#" data-value="WALKING">Walking</a></li>
-                                    <li><a href="#" data-value="BICYCLING">Bicycling</a></li>
-                                    <li><a href="#" data-value="TRANSIT">Transit</a></li>
-                                </ul>
-                            </div>
-
-                            <div class="btn-group">
-                                <button id="travel-speed-dropdown" type="button" class="btn btn-default">Real Time</button>
-                                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <span class="caret"></span>
-                                    <span class="sr-only">Toggle Dropdown</span>
-                                </button>
-                                <ul class="dropdown-menu">
-                                    <li><a href="#">Real Time</a></li>
-                                    <li><a href="#">x2</a></li>
-                                    <li><a href="#">x5</a></li>
-                                    <li><a href="#">x10</a></li>
-                                </ul>
-                            </div>
-
-                            <input id="startDate" type="datetime" value="" placeholder="Now"/>
-                            <br/>
-
-                            <br/>
-
-                            <div>
-                                Report:
-                                <!--<form action="">-->
-                                <!--<input type="checkbox" name="reporting" value="Location">Location-->
-                                <!--<input type="checkbox" name="reporting" value="Elevation">Elevation-->
-                                <!--<input type="checkbox" name="reporting" value="Location">Orientation-->
-                                <!--<input type="checkbox" name="reporting" value="Attitude">Attitude-->
-                                <!--</form>-->
-
-                                <label class="checkbox-inline"><input type="checkbox" value="true" checked="checked">Location</label>
-                                <label class="checkbox-inline"><input type="checkbox" value="true" checked="checked">Elevation</label>
-                                <label class="checkbox-inline"><input type="checkbox" value="" disabled>Orientation</label>
-                                <label class="checkbox-inline"><input type="checkbox" value="" disabled>Attitude</label>
-                            </div>
-
-                            <br/>
-
-                            <div class="text-center">
-                                <label type="button" class="btn btn-primary" id="itinerary-run">Run</label>
-                                <label type="button" class="btn btn-primary" id="itinerary-pause">Pause</label>
-                                <label type="button" class="btn btn-primary" id="itinerary-resume">Resume</label>
-                                <label type="button" class="btn btn-primary" id="itinerary-stop">Stop</label>
-                            </div>
-                        </div>
                         <div class="tab-pane" id="tab-tree">
                             <div class="container-fluid" style="padding-right: 2px; padding-left: 2px;">
                                 <div class="row">
@@ -403,28 +271,9 @@
     </div>
 </main>
 
-<link rel='stylesheet' type="text/css" href='js-third-party/bootstrap-slider/css/bootstrap-slider.min.css'/>
-<link rel="stylesheet" type="text/css" href="js-third-party/patternfly-bootstrap-treeview/dist/bootstrap-treeview.min.css"/>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/4.4.0/bootbox.min.js"></script>
+<script type="text/javascript" src="app/renderer/renderer.js"></script>
 <script type="text/javascript" src="https://cdn.rawgit.com/lingtalfi/simpledrag/master/simpledrag.js"></script>
-
-<!--THREE JS-->
-<!--<script type="text/javascript" src="js-third-party/three.js/build/three.min.js"></script>-->
-<!--<script type="text/javascript" src="js-third-party/three.js/examples/js/renderers/CSS3DRenderer.js"></script>-->
-<!--<script type="text/javascript" src="js-third-party/three.js/examples/js/controls/OrbitControls.js"></script>-->
-<!--<script type="text/javascript" src="js-third-party/three.js/examples/js/controls/TransformControls.js"></script>-->
-<!--<script type="text/javascript" src="js-third-party/KeyboardState.js"></script>-->
-<!--<script type="text/javascript" src="js-third-party/math.min.js"></script>-->
-<!--<script type="text/javascript" src="js-third-party/three.js/examples/js/loaders/MTLLoader.js"></script>-->
-<!--<script type="text/javascript" src="js-third-party/three.js/examples/js/loaders/OBJLoader.js"></script>-->
-<!--<script type="text/javascript" src="js-third-party/three.js/examples/js/libs/tween.min.js"></script>-->
-
-<!--Bootstrap third party -->
-<!--<script type="text/javascript" src="js-third-party/bootstrap-slider/bootstrap-slider.min.js"></script>-->
-<!--<script type="text/javascript" src="js-third-party/patternfly-bootstrap-treeview/dist/bootstrap-treeview.min.js"></script>-->
-
 <script type="text/javascript" src="js-libs/organismo.development.js"></script>
-<script type="text/javascript" src="https://unpkg.com/three.texttexture"></script>
 
 
 </body>

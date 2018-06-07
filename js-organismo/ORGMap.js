@@ -145,35 +145,32 @@ class ORGMap extends ORGLocationProvider {
      * @private
      */
     _createMap(onElement, onCurrentLocation) {
+        const _this = this;
         let map = new google.maps.Map(onElement, {
-            //center: {lat: -33.8688, lng: 151.2195},
+            center: {lat: -33.8688, lng: 151.2195},
             zoom: 13,
             mapTypeId: 'roadmap'
-        });
+        })
 
-        if (onCurrentLocation) {
-            const _this = this;
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(function (position) {
-                    const pos = {
-                        lat: position.coords.latitude,
-                        lng: position.coords.longitude
-                    };
-                    map.setCenter(pos);
-                }, function () {
-                    let center = new THREE.Vector3();
-                    map.getCenter(center);
-                    _this_.handleLocationError(true, center);
-                });
-            } else {
-                // Browser doesn't support Geolocation
-                let center = new THREE.Vector3();
-                map.getCenter(center);
-                _this._handleLocationError(false, center);
+        google.maps.event.addListenerOnce(map, /*'google-map-ready'*/'tilesloaded', () => {
+            if (onCurrentLocation) {
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition( (position) => {
+                        const pos = {
+                            lat: position.coords.latitude,
+                            lng: position.coords.longitude
+                        };
+                        map.setCenter(pos);
+                    }, () => {
+                        _this._handleLocationError(true, null)
+                    });
+                } else {
+                    _this._handleLocationError(false, null) // Browser doesn't support Geolocation
+                }
             }
-        }
+        })
 
-        return map;
+        return map
     }
 
     _createDirectionsRenderer(map) {
@@ -529,12 +526,15 @@ class ORGMap extends ORGLocationProvider {
 
 
     _handleLocationError(browserHasGeolocation, pos) {
-        let infoWindow = new google.maps.InfoWindow;
-        infoWindow.setPosition(pos);
+        bootbox.alert({ closeButton: false, message: browserHasGeolocation ? 'The Geolocation service failed to provide the current location.' :'The browser doesn\'t support Geolocation.' })
+        /*let infoWindow = new google.maps.InfoWindow;
+        if (pos) {
+            infoWindow.setPosition(pos);
+        }
         infoWindow.setContent(browserHasGeolocation ?
             'Error: The Geolocation service failed.' :
             'Error: Your browser doesn\'t support geolocation.');
-        infoWindow.open(map);
+        infoWindow.open(map);*/
     }
 
     _calculateDistance(directions) {
