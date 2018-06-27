@@ -5,18 +5,17 @@
     <meta name=viewport content="width=device-width, initial-scale=1">
 
     <title>Organismo</title>
-
-    <link rel="stylesheet" type="text/css" href="css/style.css"/>
-    <link rel="stylesheet" type="text/css" href="css/navigator-bar.css"/>
-    <link rel="stylesheet" type="text/css" href="css/map.css"/>
+    <link rel="stylesheet" type="text/css" href="assets/css/style.css"/>
+    <link rel="stylesheet" type="text/css" href="assets/css/navigator-bar.css"/>
+    <link rel="stylesheet" type="text/css" href="assets/css/map.css"/>
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="node_modules/bootstrap/dist/css/bootstrap-theme.min.css">
     <link rel="stylesheet" type="text/css" href="node_modules/jquery-contextmenu/dist/jquery.contextMenu.min.css">
-    <link rel="stylesheet" type="text/css" href="css/bootstrap-override.css"/>
-    <link rel="stylesheet" type="text/css" href="css/tooltips2.css"/>
-    <link rel='stylesheet' type="text/css" href='js-third-party/bootstrap-slider/css/bootstrap-slider.min.css'/>
-    <link rel="stylesheet" type="text/css" href="js-third-party/patternfly-bootstrap-treeview/dist/bootstrap-treeview.min.css"/>
+    <link rel="stylesheet" type="text/css" href="assets/css/bootstrap-override.css"/>
+    <link rel="stylesheet" type="text/css" href="assets/css/tooltips2.css"/>
+    <link rel='stylesheet' type="text/css" href='node_modules/bootstrap-slider/dist/css/bootstrap-slider.min.css'/>
+    <link rel="stylesheet" type="text/css" href="src/third-party/patternfly-bootstrap-treeview/dist/bootstrap-treeview.min.css"/>
 </head>
 
 <body>
@@ -70,9 +69,9 @@
     <div>
         <ul class='mynavbar-table'>
             <li class='navbar-button-up'>
-                <a class='nav-text' href=''>Organismo</a></li>
+                <div class='nav-text'>Organismo</div>
+            </li>
         </ul>
-    </div>
     </div>
 </nav>
 
@@ -211,7 +210,6 @@
                                             <!--<div class='inlineCheckboxLabel'>Alert Window</div>-->
                                         <!--</div>-->
 
-
                                         <div>
                                         <span>Layers Dist:</span> &nbsp; <input id="ex1" data-slider-id='ex1Slider' type="text" data-slider-min="0" data-slider-max="100" data-slider-step="1" data-slider-value="0" data-slider-tooltip="hide"/>
                                         <br/>
@@ -252,10 +250,13 @@
     </div>
 </main>
 
-<script type="text/javascript" src="app/renderer/renderer.js"></script>
 <script type="text/javascript" src="https://cdn.rawgit.com/lingtalfi/simpledrag/master/simpledrag.js"></script>
-<script type="text/javascript" src="js-libs/organismo.development.js"></script>
-
+<script type="text/javascript" src='src/third-party/KeyboardState.js'></script>
+<script type="text/javascript" src='src/third-party/math.min.js'></script>
+<script type="text/javascript" src='src/third-party/dist.js'></script>
+<script type="text/javascript" src="src/organismo/ORGMain.js"></script>
+<script type="text/javascript" src='src/third-party/patternfly-bootstrap-treeview/dist/bootstrap-treeview.min.js'></script>
+<script type="text/javascript" src="src/organismo/ORGSettingsControls.js"></script>
 
 </body>
 </html>
