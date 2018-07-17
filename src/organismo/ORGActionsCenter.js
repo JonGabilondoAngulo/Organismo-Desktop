@@ -90,7 +90,7 @@ class ORGActionsCenter {
             // 5. Get device 3D model
             let model = null;
             if (ORG.scene.flagShowDevice3DModel) {
-                model = await ORG3DDeviceModelLoader.loadDevice3DModel(ORG.device, ORG.scene, kORGDevicePositionY);
+                model = await ORG3DDeviceModelLoader.loadDevice3DModel(ORG.device, ORG.scene);
             }
 
             // 6. Add device with screenshot to scene
@@ -222,7 +222,7 @@ class ORGActionsCenter {
 
     static async showDevice3DModel() {
         try {
-            let model = await ORG3DDeviceModelLoader.loadDevice3DModel(ORG.device, ORG.scene, kORGDevicePositionY);
+            let model = await ORG3DDeviceModelLoader.loadDevice3DModel(ORG.device, ORG.scene);
             if (model) {
                 ORG.scene.addDevice3DModel(model);
                 ORG.scene.setDeviceOrientation(ORG.device.orientation);
@@ -321,6 +321,11 @@ class ORGActionsCenter {
             bootbox.alert({
                 title: err.name,
                 message: err.message
+            });
+        } else if (err instanceof ReferenceError || err instanceof TypeError) {
+            bootbox.alert({
+                title: err.name,
+                message: err.message + ".\nFile:" + err.fileName + "\nLine:" + err.lineNumber
             });
         } else if (typeof err === "string") {
             const safeErrorText = (err.length < 2000 ? ((err.length === 0) ? "Unknown error" : err) : err.substring(0, 2000));

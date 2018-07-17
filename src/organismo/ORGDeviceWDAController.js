@@ -6,6 +6,7 @@ const { ORGError, ORGERR } = require('./ORGError')
 const ORGDeviceBaseController = require('./ORGDeviceBaseController')
 const { ORGDevice, ORGDeviceORIENTATION } = require('./ORGDevice')
 const { ORGDeviceMetrics, ORGDevicesData } = require('./ORG.DeviceMetrics')
+const ORGTestApp = require('./ORGTestApp')
 
 module.exports =
 

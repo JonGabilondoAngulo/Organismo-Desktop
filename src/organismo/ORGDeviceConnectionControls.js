@@ -2,8 +2,7 @@
  * Created by jongabilondo on 20/09/2016.
  */
 
-const ORGActionsCenter = require('./ORGActionsCenter')
-
+//const ORGActionsCenter = require('./ORGActionsCenter')
 
 ORG.UI.connectButton = $('#connect-button');
 //ORG.UI.connectDriversMenu = $('#connect-drivers-menu');

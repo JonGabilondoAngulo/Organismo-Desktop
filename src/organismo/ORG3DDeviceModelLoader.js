@@ -14,7 +14,7 @@ class ORG3DDeviceModelLoader {
      * When load is finished it will call to the organismo scene to add the model to the three.js scene.
      * @param scene the ORG.scene to add the 3D model to.
      */
-    static loadDevice3DModel(device, scene, yPosition) {
+    static loadDevice3DModel(device, scene) {
         return new Promise((resolve, reject) => {
             if (device.productName.startsWith('iPhone 5')) {
                 this._load_iPhone_5(scene,device).then(
