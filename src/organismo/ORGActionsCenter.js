@@ -124,7 +124,7 @@ class ORGActionsCenter {
     }
 
     static async refreshUITree() {
-        bootbox.dialog({ message: '<div class="text-center"><h4><i class="fa fa-spin fa-spinner"></i>&nbsp;Getting device information...</h4></div>' });
+        bootbox.dialog({ message: '<div class="text-center"><h4><i class="fa fa-spin fa-spinner"></i>&nbsp;Getting UI information...</h4></div>' });
         try {
             let controller = ORG.deviceController;
 

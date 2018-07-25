@@ -12,7 +12,7 @@ ORG.UI.deviceModelLabel = $('#device-model-label');
 ORG.UI.testAppNameLabel = $('#testapp-name-label');
 ORG.UI.testAppVersionLabel = $('#testapp-version-label');
 ORG.UI.testAppBundleIdLabel = $('#testapp-bundleid-label');
-ORG.UI.dropdownDriver = $('#selected'); // the button that holds the text
+ORG.UI.dropdownDriver = $('#drivers-menu'); // the button that holds the text
 
 $(".dropdown-menu a").click(function () {
         $(this).parents(".btn-group").children(":first").text($(this).text())
