@@ -1,5 +1,6 @@
 # Organismo-Desktop
 
+Follow the guidelines in Organismo Wiki: https://github.com/JonGabilondoAngulo/Organismo-Desktop/wiki
 
 UI Exploration
 -
