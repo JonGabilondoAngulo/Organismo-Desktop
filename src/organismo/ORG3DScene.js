@@ -473,29 +473,8 @@ class ORG3DScene {
         }
     };
 
-    /*expand() {
-        if (!this._uiExpanded) {
-            bootbox.dialog({ message: '<div class="text-center"><h4><i class="fa fa-spin fa-spinner"></i>&nbsp;Expanding UI elements...</h4></div>' }); // Progress alert
-
-            ORG.deviceController.getElementTree({
-                "status-bar": true,
-                "keyboard": true,
-                "alert": true,
-                "normal": true
-            });
-            //this.expanding = true;
-        }
-    }
-
-    collapseAndExpandAnimated() {
-        const _this = this;
-        this.collapse(() => {
-            _this.expand();
-        })
-    }*/
-
     collapse(completionCallback) {
-        if (this.isExpanded) {
+        if (!this.isExpanded) {
             return;
         }
         // we dont need the mouse listener and the raycaster anymore
