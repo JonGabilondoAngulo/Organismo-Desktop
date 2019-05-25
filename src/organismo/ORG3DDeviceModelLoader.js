@@ -53,10 +53,13 @@ class ORG3DDeviceModelLoader {
                         (object) => {
                             // model loaded, scale and translate
                             let deviceBox =  new THREE.Box3().setFromObject(object);
-                            const scale = device.bodySize.height / deviceBox.getSize().y;
+                            var deviceBoxVector;
+                            deviceBoxVector = deviceBox.getSize(deviceBoxVector);
+                            const scale = device.bodySize.height / deviceBoxVector.y;
                             object.scale.set( scale, scale, scale );
                             deviceBox =  new THREE.Box3().setFromObject(object);
-                            object.position.set( 0, - deviceBox.getSize().y/2.0, - ((deviceBox.getSize().z/2.0) + 0.0005) ); // Place device 0.5mm behind the screen
+                            deviceBoxVector = deviceBox.getSize(deviceBoxVector);
+                            object.position.set( 0, - deviceBoxVector.y/2.0, - ((deviceBoxVector.z/2.0) + 0.0005) ); // Place device 0.5mm behind the screen
                             let deviceModel = new ORG3DDeviceModel(scene.THREEScene, object)
                             resolve(deviceModel);
                         },
@@ -88,10 +91,13 @@ class ORG3DDeviceModelLoader {
                         (object) => {
                             // model loaded, scale and translate
                             let deviceBox =  new THREE.Box3().setFromObject(object);
-                            const scale = device.bodySize.height / deviceBox.getSize().y;
+                            let deviceBoxVector;
+                            deviceBoxVector = deviceBox.getSize(deviceBoxVector);
+                            const scale = device.bodySize.height / deviceBoxVector.y;
                             object.scale.set(scale, scale, scale);
                             deviceBox =  new THREE.Box3().setFromObject(object);
-                            object.position.set(0, - deviceBox.getSize().y/2.0, - ((deviceBox.getSize().z/2.0) + 0.0005) ); // Place device 0.5mm behind the screen
+                            deviceBoxVector = deviceBox.getSize(deviceBoxVector);
+                            object.position.set(0, - (deviceBoxVector.y/2.0), - ((deviceBoxVector.z/2.0) + 0.0005) ); // Place device 0.5mm behind the screen
                             let deviceModel = new ORG3DDeviceModel(scene.THREEScene, object)
                             resolve(deviceModel);
                         },

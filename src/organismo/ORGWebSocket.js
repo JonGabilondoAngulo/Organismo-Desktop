@@ -111,7 +111,12 @@ class ORGWebSocket {
                 reject(event)
             }
             this._ws.onmessage = (event) => {
-                let messageJSON = JSON.parse(event.data);
+                let messageJSON = null;
+                try {
+					messageJSON = JSON.parse(event.data);
+				} catch (err) {
+					console.debug('ERROR parsing response.' + event.data)
+				}
                 if (messageJSON) {
             		resolve(messageJSON)
 				} else {

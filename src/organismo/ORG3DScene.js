@@ -15,6 +15,7 @@ const ORGBeacon = require('./ORGBeacon')
 const ORG3DBeacon = require('./ORG3DBeacon')
 const ORGContextMenuManager = require('./ORGContextMenuManager')
 const ORG3DLocationMarker = require('./ORG3DLocationMarker')
+const { CSS3DObject, CSS3DSprite, CSS3DRenderer } = require('three-css3drenderer')
 
 const ORGSceneVisualizationMask = {
     ShowFloor : 0x1,
@@ -51,12 +52,15 @@ class ORG3DScene {
         this._tooltiper = null; // a ORGTooltip
         this._beaconTransformControl = null; // ORG3DBeaconTransformControl
         this._THREEScene = null;
+        this._THREECSSScene = null;
         this._THREECamera = null;
         this._THREERenderer = null;
+        this._THREECSSRenderer = null;
         this._THREEOrbitControls = null;
         this._keyboardState = null;
         this._threeClock = null;
         this._uiExpanded = false;
+        this._showingActors = false;
         this._canvasDomElement = null; // the table cell where the renderer will be created, it contains _rendererDOMElement
         this._rendererDOMElement = null; // threejs scene is displayed in this DOM element
         this._contextMenuManager = null;
@@ -94,6 +98,11 @@ class ORG3DScene {
     get THREERenderer() {
         return this._THREERenderer;
     }
+
+    get THREECSSRenderer() {
+        return this._THREECSSRenderer;
+    }
+
 
     get deviceScreen() {
         //return this._deviceScreen;
@@ -136,6 +145,14 @@ class ORG3DScene {
 
     set expanding(expanding) {
         this._expanding = expanding;
+    }
+
+    get isShowingActors() {
+        return this._showingActors;
+    }
+
+    set isShowingActors(showing) {
+        this._showingActors = showing;
     }
 
     get contextMenuManager() {
@@ -502,6 +519,120 @@ class ORG3DScene {
         })
     }
 
+    // function for drawing rounded rectangles
+    _roundRect(ctx, x, y, w, h, r)
+    {
+        ctx.beginPath();
+        ctx.moveTo(x+r, y);
+        ctx.lineTo(x+w-r, y);
+        ctx.quadraticCurveTo(x+w, y, x+w, y+r);
+        ctx.lineTo(x+w, y+h-r);
+        ctx.quadraticCurveTo(x+w, y+h, x+w-r, y+h);
+        ctx.lineTo(x+r, y+h);
+        ctx.quadraticCurveTo(x, y+h, x, y+h-r);
+        ctx.lineTo(x, y+r);
+        ctx.quadraticCurveTo(x, y, x+r, y);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+    }
+
+    _makeTextSprite( message, parameters )
+    {
+        if ( parameters === undefined ) parameters = {};
+
+        var fontface = parameters.hasOwnProperty("fontface") ?
+            parameters["fontface"] : "Arial";
+
+        var fontsize = parameters.hasOwnProperty("fontsize") ?
+            parameters["fontsize"] : 18;
+
+        var borderThickness = parameters.hasOwnProperty("borderThickness") ?
+            parameters["borderThickness"] : 1;
+
+        var borderColor = parameters.hasOwnProperty("borderColor") ?
+            parameters["borderColor"] : { r:0, g:0, b:0, a:1.0 };
+
+        var backgroundColor = parameters.hasOwnProperty("backgroundColor") ?
+            parameters["backgroundColor"] : { r:255, g:255, b:255, a:1.0 };
+
+        //var spriteAlignment = THREE.SpriteAlignment.topLeft;
+
+        var canvas = document.createElement('canvas');
+        var context = canvas.getContext('2d');
+        context.font = "Bold " + fontsize + "px " + fontface;
+
+        // get size data (height depends only on font size)
+        var metrics = context.measureText( message );
+        var textWidth = metrics.width;
+
+        // background color
+        context.fillStyle   = "rgba(" + backgroundColor.r + "," + backgroundColor.g + ","
+            + backgroundColor.b + "," + backgroundColor.a + ")";
+        // border color
+        context.strokeStyle = "rgba(" + borderColor.r + "," + borderColor.g + ","
+            + borderColor.b + "," + borderColor.a + ")";
+
+        context.lineWidth = borderThickness;
+        this._roundRect(context, borderThickness/2, borderThickness/2, textWidth + borderThickness, fontsize * 1.4 + borderThickness, 6);
+        // 1.4 is extra height factor for text below baseline: g,j,p,q.
+
+        // text color
+        context.fillStyle = "rgba(0, 0, 0, 1.0)";
+
+        context.fillText( message, borderThickness, fontsize + borderThickness);
+
+        // canvas contents will be used for a texture
+        var texture = new THREE.CanvasTexture(canvas)
+        //texture.needsUpdate = true;
+
+        var spriteMaterial = new THREE.SpriteMaterial(
+            { map: texture});//, useScreenCoordinates: false});//, alignment: spriteAlignment } );
+        var sprite = new THREE.Sprite( spriteMaterial );
+
+        return sprite;
+    }
+
+
+    hideUIActors() {
+        this._showingActors = false;
+    }
+
+    showUIActors() {
+        this._showingActors = true;
+
+        var spritey = this._makeTextSprite( " Tap and More Text ",
+            { fontsize: 16, borderColor: {r:255, g:0, b:0, a:1.0}, backgroundColor: {r:255, g:100, b:100, a:0.8} } );
+        spritey.position.set(0.05,1.5,0.0);
+        //spritey.position.normalize();
+        spritey.scale.set(0.2,0.1,1.0);
+        spritey.center.set( 0.0, 0.5 );
+        this._THREEScene.add( spritey );
+
+        //var spritey = this._makeTextSprite( " LongPress ",
+        //    { fontsize: 12,  borderColor: {r:0, g:0, b:255, a:1.0} , backgroundColor: {r:255, g:255, b:255, a:0.8}} );
+        //spritey.position.set(0.0, 0.0, 0.0);
+        ////spritey.position.normalize();
+        //spritey.center.set( 0.0, 0.5 );
+        //spritey.scale.set(1,1,1.0);
+        //this._THREEScene.add( spritey );
+
+
+        var curve = new THREE.QuadraticBezierCurve3(
+            new THREE.Vector3( 0, 1.5, 0 ),
+            new THREE.Vector3( 0.08, 1.52, 0 ),
+            new THREE.Vector3( 0.05,1.55,0 ));
+        var points = curve.getPoints( 50 );
+        var geometry = new THREE.BufferGeometry().setFromPoints( points );
+        var material = new THREE.LineBasicMaterial( { color : 0xff0000 } );
+
+        // Create the final object to add to the scene
+        var curveObject = new THREE.Line( geometry, material );
+        this._THREEScene.add( curveObject );
+
+
+    }
+
     showHideDeviceTransformControls(mode) {
         this._device.showHideDeviceTransformControls(this, mode);
 /*
@@ -695,8 +826,14 @@ class ORG3DScene {
     }
 
     resize(newSize) {
-        this._THREERenderer.setSize(newSize.width, this._THREERenderer.getSize().height);
-        this._THREECamera.aspect	= newSize.width / this._THREERenderer.getSize().height;
+        if (this._THREERenderer) {
+            this._THREERenderer.setSize(newSize.width, this._THREERenderer.getSize().height);
+            this._THREECamera.aspect = newSize.width / this._THREERenderer.getSize().height;
+        }
+        if (this._THREECSSRenderer) {
+            this._THREECSSRenderer.setSize(newSize.width, this._THREECSSRenderer.getSize().height);
+            this._THREECamera.aspect = newSize.width / this._THREECSSRenderer.getSize().height;
+        }
         this._THREECamera.updateProjectionMatrix();
     }
 
@@ -758,20 +895,14 @@ class ORG3DScene {
         const rendererCanvasHeight = this._canvasDomElement.clientHeight;
 
         this._THREEScene = new THREE.Scene();
-        //this._THREEScene.add(this._THREEDeviceAndScreenGroup);
-
+        this._THREECSSScene = new THREE.Scene();
         this._THREECamera = new THREE.PerspectiveCamera(65, (rendererCanvasWidth / rendererCanvasHeight), 0.001, 10000);
-        this._THREERenderer = new THREE.WebGLRenderer({antialias: true /*, alpha:true (if transparency wanted)*/});
-        this._THREERenderer.domElement.style.position = 'absolute';
-        this._THREERenderer.domElement.style.top = 0;
-        //_THREERenderer.domElement.style.zIndex = 0;
-        //_THREERenderer.setClearColor(0x000000);
 
-        this._THREERenderer.setSize(rendererCanvasWidth, rendererCanvasHeight);
-        this._canvasDomElement.appendChild(this._THREERenderer.domElement);
-        this._rendererDOMElement = this._THREERenderer.domElement; // the DOM element for the renderer
+        this._THREERenderer = this._createWebGLRenderer(rendererCanvasWidth, rendererCanvasHeight);
+        this._THREECSSRenderer = this._createCSSRenderer(rendererCanvasWidth, rendererCanvasHeight);
 
-        this._THREEOrbitControls = new THREE.OrbitControls(this._THREECamera, this._THREERenderer.domElement);//this._canvasDomElement);
+        this._THREEOrbitControls = new THREE.OrbitControls(this._THREECamera, (this._THREECSSRenderer ?this._THREECSSRenderer.domElement :this._THREERenderer.domElement));
+
         this._keyboardState = new KeyboardState();
 
         if (showFloor) {
@@ -794,12 +925,62 @@ class ORG3DScene {
         this._mouseListener.addDelegate(this._contextMenuManager);
         this._mouseListener.enable();
 
+        this._lab();
+
         this._render();
         //ORG.WindowResize(this._THREERenderer, this._THREECamera, this._canvasDomElement);
 
         this.createRaycasterForScene();
 
         this._device = new ORG3DDevice();
+    }
+
+    _createWebGLRenderer(rendererCanvasWidth, rendererCanvasHeight) {
+        var renderer = new THREE.WebGLRenderer({antialias: true /*, alpha:true (if transparency wanted)*/});
+        renderer.domElement.style.position = 'absolute';
+        //renderer.domElement.style.top = 0;
+        renderer.domElement.style.zIndex = 0;
+        renderer.setSize(rendererCanvasWidth, rendererCanvasHeight);
+        this._canvasDomElement.appendChild(renderer.domElement);
+        this._rendererDOMElement = renderer.domElement; // the DOM element for the renderer
+
+        return renderer;
+    }
+
+    _createCSSRenderer(rendererCanvasWidth, rendererCanvasHeight) {
+        var renderer = null;
+        if (CSS3DRenderer !== undefined) {
+            renderer = new CSS3DRenderer();
+            renderer.setSize( rendererCanvasWidth, rendererCanvasHeight );
+            renderer.domElement.style.position = 'absolute';
+            //renderer.domElement.style.top = 0;
+            renderer.domElement.style.zIndex = 1;
+            this._canvasDomElement.appendChild( renderer.domElement );
+
+            //let element = document.createElement( 'div' );
+            //element.style.width =  '120px';
+            //element.style.height = '160px';
+            //element.style.boxShadow = '0px 0px 12px rgba(0,255,255,0.5)';
+            //element.style.border = '1px solid rgba(127,255,255,0.25)';
+            //element.style.textAlign = 'center';
+            //element.style.cursor = 'default';
+            ////element.className = 'element';
+            //element.style.backgroundColor = 'rgba(0,127,127,' + ( Math.random() * 0.5 + 0.25 ) + ')';
+            //
+            //let symbol = document.createElement( 'div' );
+            ////symbol.className = 'symbol';
+            ////symbol.className = 'screenshot3';
+            //symbol.textContent = "TEXT CONTENT";
+            //symbol.style.fontSize = '20px';
+            //symbol.style.color = 'color: rgba(255,255,255,0.75)';
+            //
+            //element.appendChild( symbol );
+            //
+            //let object = new CSS3DObject( element );
+            //object.position.set( 0, 0, 0);
+            //this._THREECSSScene.add( object );
+        }
+        return renderer;
     }
 
     _calculateFloorPosition() {
@@ -886,7 +1067,14 @@ class ORG3DScene {
         const _this = this;
 
         requestAnimationFrame(() => {
-            _this._THREERenderer.render(_this._THREEScene, _this._THREECamera);
+            if (_this._THREERenderer) {
+                _this._THREERenderer.render(_this._THREEScene, _this._THREECamera);
+            }
+
+            if (_this._THREECSSRenderer) {
+                _this._THREECSSRenderer.render(_this._THREECSSScene, _this._THREECamera);
+            }
+
             _this._THREEOrbitControls.update();
             _this._updateScene();
             TWEEN.update();
@@ -894,127 +1082,286 @@ class ORG3DScene {
         })
     }
 
-    _updateScene()
-    {
-       /* if (this._deviceScreen) {
-            this._deviceScreen.renderUpdate();
-        }*/
-        this._device.renderUpdate();
+    _updateScene() {
+         this._device.renderUpdate();
 
         /*if (this._transformControl) {
-            this._transformControl.update(); // important to update the controls size while changing POV
+            this._transformControl.update();
         }*/
+
         if (this._beaconTransformControl) {
-            this._beaconTransformControl.update(); // important to update the controls size while changing POV
+            this._beaconTransformControl.update();
         }
+
         if (ORG.systemInfoManager) {
             ORG.systemInfoManager.update();
         }
-/*
-        _keyboardState.update();
-
-        // Expand/Collapse UI
-        if (_keyboardState.down("E")) {
-            ORG.scene.expandCollapse();
-        }
-        else if (_keyboardState.down("F")) {
-            checkButtonShowFloor.click();
-            ORG.scene.setShowFloor(checkButtonShowFloor.is(':checked'));
-        }
-        else if (_keyboardState.down("P")) {
-            checkButtonShowPrivate.click();
-            ORG.scene.setShowPrivate(checkButtonShowPrivate.is(':checked'));
-        }
-        else if (_keyboardState.down("L")) {
-            checkButtonLiveScreen.click();
-            ORG.scene.setLiveScreen(checkButtonLiveScreen.is(':checked'));
-         }
-        else if (_keyboardState.down("T")) {
-            checkButtonShowTooltips.click();
-            ORG.scene.setShowTooltips(checkButtonShowTooltips.is(':checked'));
-         }
-*/
-        // rotate left/right/up/down
-
-        //if (keyboard.down("left")) {
-        //    //iPhone5Object.translateX(-50);
-        //    threeScreenPlane.translateX(-50);
-        //}
-        //if (keyboard.down("right")) {
-        //    //iPhone5Object.translateX( 50);
-        //    threeScreenPlane.translateX(50);
-        //}
-        //if (keyboard.pressed("up")) {
-        //    //iPhone5Object.translateZ(-50);
-        //    threeScreenPlane.translateZ(-50);
-        //}
-        //if (keyboard.pressed("down")) {
-        //    //iPhone5Object.translateZ( 50);
-        //    threeScreenPlane.translateZ(50);
-        //}
-
-        //var rotation_matrix = new THREE.Matrix4().identity();
-        /*
-        if (_keyboardState.pressed("A")) {
-            //iPhone5Object.rotateOnAxis(new THREE.Vector3(0,1,0), rotateAngle);
-            if (!!threeScreenPlane) {
-                threeScreenPlane.rotateOnAxis(new THREE.Vector3(0,1,0), rotateAngle);
-            }
-            deviceMotionChanged = true;
-        }
-        if (keyboard.pressed("D")) {
-            //iPhone5Object.rotateOnAxis(new THREE.Vector3(0,1,0), -rotateAngle);
-            threeScreenPlane.rotateOnAxis(new THREE.Vector3(0,1,0), -rotateAngle);
-            deviceMotionChanged = true;
-        }
-        if (keyboard.pressed("R")) {
-            //iPhone5Object.rotateOnAxis(new THREE.Vector3(1,0,0), rotateAngle);
-            threeScreenPlane.rotateOnAxis(new THREE.Vector3(1,0,0), rotateAngle);
-            deviceMotionChanged = true;
-        }
-        if (keyboard.pressed("F")) {
-            //iPhone5Object.rotateOnAxis(new THREE.Vector3(1,0,0), -rotateAngle);
-            threeScreenPlane.rotateOnAxis(new THREE.Vector3(1,0,0), -rotateAngle);
-            deviceMotionChanged = true;
-        }
-        if (keyboard.pressed("Q")) {
-            //iPhone5Object.rotateOnAxis(new THREE.Vector3(0,0,1), rotateAngle);
-            threeScreenPlane.rotateOnAxis(new THREE.Vector3(0,0,1), rotateAngle);
-            deviceMotionChanged = true;
-        }
-        if (keyboard.pressed("W")) {
-            //iPhone5Object.rotateOnAxis(new THREE.Vector3(0,0,1), -rotateAngle);
-            threeScreenPlane.rotateOnAxis(new THREE.Vector3(0,0,1), -rotateAngle);
-            deviceMotionChanged = true;
-        }
-        if (keyboard.pressed("Z")) {
-            //iPhone5Object.position.set(0,0,0);
-            //iPhone5Object.rotation.set(0,0,0);
-            threeScreenPlane.position.set(0,0,0);
-            threeScreenPlane.rotation.set(0,0,0);
-            deviceMotionChanged = true;
-        }*/
-
-        //if (motionActive==true && deviceMotionChanged==true) {
-        //    //alert("1");
-        //    if (motionMode == "send") {
-        //        //alert("2");
-        //        // send motion data to device
-        //        var rotation = iPhone5Object.rotation;
-        //        var quaternion = iPhone5Object.quaternion;
-        //
-        //        var message = {
-        //            "command" : "SimulatorMotionUpdate",
-        //            "content" : {"q" : { "x" : quaternion.x, "y":quaternion.z, "z":quaternion.y, "w":quaternion.w}}
-        //        };
-        //
-        //        sendSimulatorMotionUpdate(message);
-        //    }
-        //}
-
-        //var timeOffset = uniforms.time.value + attributes.customOffset.value[ v ];
-        //particleGeometry.vertices[v] = position(timeOffset);
-        //iPhone5Object.setPosition(position(timeOffset));
     }
 
+    _lab() {
+
+        var objects = [];
+        var targets = { table: [], sphere: [], helix: [], grid: [] };
+
+        var table = [
+            "H", "Hydrogen", "1.00794", 1, 1,
+            "He", "Helium", "4.002602", 18, 1,
+            "Li", "Lithium", "6.941", 1, 2,
+            "Be", "Beryllium", "9.012182", 2, 2,
+            "B", "Boron", "10.811", 13, 2,
+            "C", "Carbon", "12.0107", 14, 2,
+            "N", "Nitrogen", "14.0067", 15, 2,
+            "O", "Oxygen", "15.9994", 16, 2,
+            "F", "Fluorine", "18.9984032", 17, 2,
+            "Ne", "Neon", "20.1797", 18, 2,
+            "Na", "Sodium", "22.98976...", 1, 3,
+            "Mg", "Magnesium", "24.305", 2, 3,
+            "Al", "Aluminium", "26.9815386", 13, 3,
+            "Si", "Silicon", "28.0855", 14, 3,
+            "P", "Phosphorus", "30.973762", 15, 3,
+            "S", "Sulfur", "32.065", 16, 3,
+            "Cl", "Chlorine", "35.453", 17, 3,
+            "Ar", "Argon", "39.948", 18, 3,
+            "K", "Potassium", "39.948", 1, 4,
+            "Ca", "Calcium", "40.078", 2, 4,
+            "Sc", "Scandium", "44.955912", 3, 4,
+            "Ti", "Titanium", "47.867", 4, 4,
+            "V", "Vanadium", "50.9415", 5, 4,
+            "Cr", "Chromium", "51.9961", 6, 4,
+            "Mn", "Manganese", "54.938045", 7, 4,
+            "Fe", "Iron", "55.845", 8, 4,
+            "Co", "Cobalt", "58.933195", 9, 4,
+            "Ni", "Nickel", "58.6934", 10, 4,
+            "Cu", "Copper", "63.546", 11, 4,
+            "Zn", "Zinc", "65.38", 12, 4,
+            "Ga", "Gallium", "69.723", 13, 4,
+            "Ge", "Germanium", "72.63", 14, 4,
+            "As", "Arsenic", "74.9216", 15, 4,
+            "Se", "Selenium", "78.96", 16, 4,
+            "Br", "Bromine", "79.904", 17, 4,
+            "Kr", "Krypton", "83.798", 18, 4,
+            "Rb", "Rubidium", "85.4678", 1, 5,
+            "Sr", "Strontium", "87.62", 2, 5,
+            "Y", "Yttrium", "88.90585", 3, 5,
+            "Zr", "Zirconium", "91.224", 4, 5,
+            "Nb", "Niobium", "92.90628", 5, 5,
+            "Mo", "Molybdenum", "95.96", 6, 5,
+            "Tc", "Technetium", "(98)", 7, 5,
+            "Ru", "Ruthenium", "101.07", 8, 5,
+            "Rh", "Rhodium", "102.9055", 9, 5,
+            "Pd", "Palladium", "106.42", 10, 5,
+            "Ag", "Silver", "107.8682", 11, 5,
+            "Cd", "Cadmium", "112.411", 12, 5,
+            "In", "Indium", "114.818", 13, 5,
+            "Sn", "Tin", "118.71", 14, 5,
+            "Sb", "Antimony", "121.76", 15, 5,
+            "Te", "Tellurium", "127.6", 16, 5,
+            "I", "Iodine", "126.90447", 17, 5,
+            "Xe", "Xenon", "131.293", 18, 5,
+            "Cs", "Caesium", "132.9054", 1, 6,
+            "Ba", "Barium", "132.9054", 2, 6,
+            "La", "Lanthanum", "138.90547", 4, 9,
+            "Ce", "Cerium", "140.116", 5, 9,
+            "Pr", "Praseodymium", "140.90765", 6, 9,
+            "Nd", "Neodymium", "144.242", 7, 9,
+            "Pm", "Promethium", "(145)", 8, 9,
+            "Sm", "Samarium", "150.36", 9, 9,
+            "Eu", "Europium", "151.964", 10, 9,
+            "Gd", "Gadolinium", "157.25", 11, 9,
+            "Tb", "Terbium", "158.92535", 12, 9,
+            "Dy", "Dysprosium", "162.5", 13, 9,
+            "Ho", "Holmium", "164.93032", 14, 9,
+            "Er", "Erbium", "167.259", 15, 9,
+            "Tm", "Thulium", "168.93421", 16, 9,
+            "Yb", "Ytterbium", "173.054", 17, 9,
+            "Lu", "Lutetium", "174.9668", 18, 9,
+            "Hf", "Hafnium", "178.49", 4, 6,
+            "Ta", "Tantalum", "180.94788", 5, 6,
+            "W", "Tungsten", "183.84", 6, 6,
+            "Re", "Rhenium", "186.207", 7, 6,
+            "Os", "Osmium", "190.23", 8, 6,
+            "Ir", "Iridium", "192.217", 9, 6,
+            "Pt", "Platinum", "195.084", 10, 6,
+            "Au", "Gold", "196.966569", 11, 6,
+            "Hg", "Mercury", "200.59", 12, 6,
+            "Tl", "Thallium", "204.3833", 13, 6,
+            "Pb", "Lead", "207.2", 14, 6,
+            "Bi", "Bismuth", "208.9804", 15, 6,
+            "Po", "Polonium", "(209)", 16, 6,
+            "At", "Astatine", "(210)", 17, 6,
+            "Rn", "Radon", "(222)", 18, 6,
+            "Fr", "Francium", "(223)", 1, 7,
+            "Ra", "Radium", "(226)", 2, 7,
+            "Ac", "Actinium", "(227)", 4, 10,
+            "Th", "Thorium", "232.03806", 5, 10,
+            "Pa", "Protactinium", "231.0588", 6, 10,
+            "U", "Uranium", "238.02891", 7, 10,
+            "Np", "Neptunium", "(237)", 8, 10,
+            "Pu", "Plutonium", "(244)", 9, 10,
+            "Am", "Americium", "(243)", 10, 10,
+            "Cm", "Curium", "(247)", 11, 10,
+            "Bk", "Berkelium", "(247)", 12, 10,
+            "Cf", "Californium", "(251)", 13, 10,
+            "Es", "Einstenium", "(252)", 14, 10,
+            "Fm", "Fermium", "(257)", 15, 10,
+            "Md", "Mendelevium", "(258)", 16, 10,
+            "No", "Nobelium", "(259)", 17, 10,
+            "Lr", "Lawrencium", "(262)", 18, 10,
+            "Rf", "Rutherfordium", "(267)", 4, 7,
+            "Db", "Dubnium", "(268)", 5, 7,
+            "Sg", "Seaborgium", "(271)", 6, 7,
+            "Bh", "Bohrium", "(272)", 7, 7,
+            "Hs", "Hassium", "(270)", 8, 7,
+            "Mt", "Meitnerium", "(276)", 9, 7,
+            "Ds", "Darmstadium", "(281)", 10, 7,
+            "Rg", "Roentgenium", "(280)", 11, 7,
+            "Cn", "Copernicium", "(285)", 12, 7,
+            "Uut", "Unutrium", "(284)", 13, 7,
+            "Fl", "Flerovium", "(289)", 14, 7,
+            "Uup", "Ununpentium", "(288)", 15, 7,
+            "Lv", "Livermorium", "(293)", 16, 7,
+            "Uus", "Ununseptium", "(294)", 17, 7,
+            "Uuo", "Ununoctium", "(294)", 18, 7
+        ];
+
+        for ( var i = 0; i < table.length; i += 5 ) {
+
+            var element = document.createElement( 'div' );
+            element.className = 'element';
+            element.style.backgroundColor = 'rgba(0,127,127,' + ( Math.random() * 0.5 + 0.25 ) + ')';
+
+            var number = document.createElement( 'div' );
+            number.className = 'xnumber';
+            number.textContent = (i/5) + 1;
+            element.appendChild( number );
+
+            var symbol = document.createElement( 'div' );
+            //symbol.className = 'symbol';
+            symbol.className = 'screenshot3';
+            symbol.textContent = table[ i ];
+            element.appendChild( symbol );
+
+            // var screenshot = document.createElement( 'div' );
+            // screenshot.className = 'screenshot2';
+            // element.appendChild( screenshot );
+
+            var details = document.createElement( 'div' );
+            details.className = 'details';
+            details.innerHTML = table[ i + 1 ] + '<br>' + table[ i + 2 ];
+            element.appendChild( details );
+
+            var object = new CSS3DObject( element );
+            object.position.x = Math.random() * 4000 - 2000;
+            object.position.y = Math.random() * 4000 - 2000;
+            object.position.z = Math.random() * 4000 - 2000;
+            this._THREECSSScene.add( object );
+
+            objects.push( object );
+
+            //
+
+            var object = new THREE.Object3D();
+            var w = 222; // 140
+            var h = 480; // 180
+            object.position.x = ( table[ i + 3 ] * w ) - 1330;
+            object.position.y = - ( table[ i + 4 ] * h ) + 990;
+
+            targets.table.push( object );
+
+        }
+
+        // sphere
+
+        var vector = new THREE.Vector3();
+
+        for ( var i = 0, l = objects.length; i < l; i ++ ) {
+
+            var phi = Math.acos( -1 + ( 2 * i ) / l );
+            var theta = Math.sqrt( l * Math.PI ) * phi;
+
+            var object = new THREE.Object3D();
+
+            object.position.x = 800 * Math.cos( theta ) * Math.sin( phi );
+            object.position.y = 800 * Math.sin( theta ) * Math.sin( phi );
+            object.position.z = 800 * Math.cos( phi );
+
+            vector.copy( object.position ).multiplyScalar( 2 );
+
+            object.lookAt( vector );
+
+            targets.sphere.push( object );
+
+        }
+
+        // helix
+
+        var vector = new THREE.Vector3();
+
+        for ( var i = 0, l = objects.length; i < l; i ++ ) {
+
+            var phi = i * 0.175 + Math.PI;
+
+            var object = new THREE.Object3D();
+
+            object.position.x = 900 * Math.sin( phi );
+            object.position.y = - ( i * 8 ) + 450;
+            object.position.z = 900 * Math.cos( phi );
+
+            vector.x = object.position.x * 2;
+            vector.y = object.position.y;
+            vector.z = object.position.z * 2;
+
+            object.lookAt( vector );
+
+            targets.helix.push( object );
+
+        }
+
+        // grid
+
+        for ( var i = 0; i < objects.length; i ++ ) {
+
+            var object = new THREE.Object3D();
+
+            object.position.x = ( ( i % 5 ) * 400 ) - 800;
+            object.position.y = ( - ( Math.floor( i / 5 ) % 5 ) * 400 ) + 800;
+            object.position.z = ( Math.floor( i / 25 ) ) * 1000 - 2000;
+
+            targets.grid.push( object );
+
+        }
+
+        //this._transform( objects, targets.table, 2000 );
+
+
+    }
+
+    _transform( objects, targets, duration ) {
+
+        const _this = this;
+        TWEEN.removeAll();
+
+        for ( var i = 0; i < objects.length; i ++ ) {
+
+            var object = objects[ i ];
+            var target = targets[ i ];
+
+            new TWEEN.Tween( object.position )
+                .to( { x: target.position.x, y: target.position.y, z: target.position.z }, Math.random() * duration + duration )
+                .easing( TWEEN.Easing.Exponential.InOut )
+                .start();
+
+            new TWEEN.Tween( object.rotation )
+                .to( { x: target.rotation.x, y: target.rotation.y, z: target.rotation.z }, Math.random() * duration + duration )
+                .easing( TWEEN.Easing.Exponential.InOut )
+                .start();
+
+        }
+
+        new TWEEN.Tween( this )
+            .to( {}, duration * 2 )
+            .onUpdate( _this._render() )
+            .start();
+
+    }
 }

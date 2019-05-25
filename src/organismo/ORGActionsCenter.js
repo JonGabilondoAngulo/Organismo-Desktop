@@ -283,6 +283,14 @@ class ORGActionsCenter {
         ORG.scene.collapse();
     }
 
+    static async showUIActors() {
+        ORG.scene.showUIActors();
+    }
+
+    static async hideUIActors() {
+        ORG.scene.hideUIActors();
+    }
+
     static rotateDevice() {
         ORG.scene.showHideDeviceTransformControls("rotate");
     }

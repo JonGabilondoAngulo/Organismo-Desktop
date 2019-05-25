@@ -16,6 +16,7 @@ ORG.UI.checkButtonShowNormalWindow = $('#show-normal-window');
 ORG.UI.checkButtonShowKeyboardWindow = $('#show-keyboard-window');
 ORG.UI.checkButtonShowAlertWindow = $('#show-alert-window');
 ORG.UI.buttonExpand = $('#expand-button');
+ORG.UI.buttonShowActors = $('#show-actors-button');
 ORG.UI.buttonResetCamera = $('#reset-camera-button');
 ORG.UI.buttonRotateDevice = $('#rotate-device-button');
 ORG.UI.buttonTranslateDevice = $('#translate-device-button');
@@ -163,6 +164,23 @@ ORG.UI.buttonExpand.click(function () {
     } else {
         ORG.UI.buttonExpand.text("Collapse");
         ORGActionsCenter.expandScreenUI();
+    }
+});
+
+ORG.UI.buttonShowActors.click(function () {
+    if (!ORG.deviceController.isConnected) {
+        return;
+    }
+    if (ORG.deviceController.type === "WDA") {
+        alert("Not implemented for WDA driver.")
+        return;
+    }
+    if (ORG.scene.isShowingActors) {
+        ORG.UI.buttonShowActors.text("Show Actors");
+        ORGActionsCenter.hideUIActors();
+    } else {
+        ORG.UI.buttonShowActors.text("Hide Actros");
+        ORGActionsCenter.showUIActors();
     }
 });
 

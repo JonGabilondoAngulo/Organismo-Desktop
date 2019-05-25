@@ -725,6 +725,15 @@ class ORG3DUITreeModel {
         if (treeNode.controlEvents) {
             return true;
         }
+        if (treeNode.selectable) {
+            return true;
+        }
+        if (treeNode.leadingSwipe) {
+            return true;
+        }
+        if (treeNode.trailingSwipe) {
+            return true;
+        }
         if (treeNode.class === "UITextField" && treeNode.userInteractionEnabled) {
             return true;
         }
