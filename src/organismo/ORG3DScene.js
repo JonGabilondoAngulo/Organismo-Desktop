@@ -925,7 +925,7 @@ class ORG3DScene {
         this._mouseListener.addDelegate(this._contextMenuManager);
         this._mouseListener.enable();
 
-        this._lab();
+        //this._lab();
 
         this._render();
         //ORG.WindowResize(this._THREERenderer, this._THREECamera, this._canvasDomElement);
