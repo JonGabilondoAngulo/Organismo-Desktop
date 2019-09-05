@@ -15,6 +15,7 @@ const ORGBeacon = require('./ORGBeacon')
 const ORG3DBeacon = require('./ORG3DBeacon')
 const ORGContextMenuManager = require('./ORGContextMenuManager')
 const ORG3DLocationMarker = require('./ORG3DLocationMarker')
+const ORG3DLabSimulator = require('./ORG3DLabSimulator')
 const { CSS3DObject, CSS3DSprite, CSS3DRenderer } = require('three-css3drenderer')
 
 const ORGSceneVisualizationMask = {
@@ -80,7 +81,8 @@ class ORG3DScene {
             ORGTreeVisualizationMask.ShowScreenshots;
 
         this._uiTreeModel = new ORG3DUITreeModel(this._treeVisualizationFlags);
-        //this.expanding = false;
+        this._labSimulator = null;
+
         this._initialize(domContainer, this.flagShowFloor);
     }
 
@@ -861,6 +863,24 @@ class ORG3DScene {
         }
     }
 
+    enterLabMode() {
+        if (!this._labSimulator) {
+            this._removeFloor();
+
+            this._labSimulator = new ORG3DLabSimulator(this._THREECSSScene);
+            this._labSimulator.show();
+        } else {
+            this._labSimulator.destroy();
+            this._labSimulator = null;
+        }
+    }
+
+    setLabMode(mode) {
+        if (this._labSimulator) {
+            this._labSimulator.setMode(mode);
+        }
+    }
+
 
     //------------------------------------------------------------------------------------------------------------------
     //  DELEGATES
@@ -924,8 +944,6 @@ class ORG3DScene {
         this._mouseListener = new ORGMouseListener(this._rendererDOMElement);
         this._mouseListener.addDelegate(this._contextMenuManager);
         this._mouseListener.enable();
-
-        //this._lab();
 
         this._render();
         //ORG.WindowResize(this._THREERenderer, this._THREECamera, this._canvasDomElement);
@@ -1097,7 +1115,7 @@ class ORG3DScene {
             ORG.systemInfoManager.update();
         }
     }
-
+/*
     _lab() {
 
         var objects = [];
@@ -1290,7 +1308,6 @@ class ORG3DScene {
             object.lookAt( vector );
 
             targets.sphere.push( object );
-
         }
 
         // helix
@@ -1363,5 +1380,5 @@ class ORG3DScene {
             .onUpdate( _this._render() )
             .start();
 
-    }
+    }*/
 }

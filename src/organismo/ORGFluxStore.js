@@ -178,6 +178,19 @@ class ORGFluxStore extends FluxUtils.Store {
                     }
                 }
             }
+
+            //************************************************************
+            // LAB
+            //************************************************************
+            case 'enter-lab-mode': {
+                ORG.scene.enterLabMode();
+            } break;
+            case 'lab-mode-table':
+            case 'lab-mode-sphere':
+            case 'lab-mode-helix':
+            case 'lab-mode-grid': {
+                ORG.scene.setLabMode(payload.actionType);
+            } break;
         }
 
     }

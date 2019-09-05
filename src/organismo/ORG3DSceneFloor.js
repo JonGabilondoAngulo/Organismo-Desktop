@@ -30,8 +30,8 @@ class ORG3DSceneFloor {
         this._THREEFloor.position.set( 0, this._yPos, 0 );
         this._THREEScene.add(this._THREEFloor);
 
-        this._createXArrow(size);
-        this._createXLabel(size);
+        //this._createXArrow(size);
+        //this._createXLabel(size);
     }
 
     get position() {

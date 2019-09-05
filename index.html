@@ -85,13 +85,6 @@
                 <div id="org-splitter" class="org-splitter">
                     <span class="org-splitter-handle"></span>
                 </div>
-
-                <div id="menu">
-                    <xbutton id="xtable">TABLE</xbutton>
-                    <xbutton id="xsphere">SPHERE</xbutton>
-                    <xbutton id="xhelix">HELIX</xbutton>
-                    <xbutton id="xgrid">GRID</xbutton>
-                </div>
             </div>
 
             <div id="right-tabs" class="col-md-3">
@@ -103,13 +96,14 @@
                         <li>
                             <a href="#tab-tree" data-toggle="tab">UI Tree</a>
                         </li>
+                        <li>
+                            <a href="#tab-lab" data-toggle="tab">Lab</a>
+                        </li>
                     </ul>
 
                     <div class="tab-content">
                         <div class="tab-pane active" id="tab-settings">
-
                             <div class="container-fluid">
-
                                 <div class="panel panel-default">
                                     <div class="panel-heading">
                                         <h3 class="panel-title">Scene</h3>
@@ -147,7 +141,6 @@
                                         <button id='button-add-beacon' class="ui-button ui-widget ui-corner-all not-focusable">Add Beacon</button>-->
                                     </div>
                                 </div>
-
                                 <div class="panel panel-default">
                                     <div class="panel-heading">
                                         <h3 class="panel-title">Explore UI</h3>
@@ -228,7 +221,6 @@
 
                                     </div>
                                 </div>
-
                             </div>
                         </div>
                         <div class="tab-pane" id="tab-tree">
@@ -251,6 +243,17 @@
                                         </div>
                                     </div>
                                 </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane" id="tab-lab">
+                            <div class="panel-body" style="height: 44px; padding:4px; " >
+                                <label type="button" class="btn btn-primary" id='enter-lab-mode'>Enter Lab Mode</label>
+                            </div>
+                            <div class="btn-group" role="group" aria-label="...">
+                                <button type="button" class="btn btn-group-sm" id='lab-mode-table'>Table</button>
+                                <button type="button" class="btn btn-group-sm" id='lab-mode-sphere'>Sphere</button>
+                                <button type="button" class="btn btn-group-sm" id='lab-mode-helix'>Helix</button>
+                                <button type="button" class="btn btn-group-sm" id='lab-mode-grid'>Grid</button>
                             </div>
                         </div>
                     </div>
