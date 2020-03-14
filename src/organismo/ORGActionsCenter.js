@@ -11,12 +11,13 @@ const ORGOrganismoWSDelegate = require('./ORGOrganismoWSDelegate')
 const { ORGJSONTreeType } = require('./ORGUIJSONTreeManager')
 const { ORGError, ORGERR } = require('./ORGError')
 const { ORGActions } = require('./ORG.Constants')
+const ORGBootbox = require('./ORGBootbox')
 
 module.exports =
 
 class ORGActionsCenter {
 
-    static connect(deviceIP, devicePORT) {
+    static connect(deviceIP, devicePORT, driverName) {
 
         // Disconnect if connected
         if (ORG.deviceController && ORG.deviceController.isConnected) {
@@ -30,14 +31,13 @@ class ORGActionsCenter {
         }
 
         // Create the controller for the selected protocol.
-        const driverName = ORG.UI.dropdownDriver.text().split(' ');
-        if (driverName[0] === "Organismo") {
+        if (driverName === "Organismo") {
             if (! (ORG.deviceController instanceof ORGDeviceController)) {
                 ORG.deviceController = new ORGDeviceController(deviceIP, devicePORT, new ORGOrganismoWSDelegate());
             }
-        } else if (driverName[0] === "iDeviceControlProxy") {
+        } else if (driverName === "iDeviceControlProxy") {
             ORG.deviceController = new ORGiMobileDeviceController(deviceIP, devicePORT, new ORGiControlProxyWSDelegate());
-        } else if (driverName[0] === "WDA") {
+        } else if (driverName === "WDA") {
             ORG.deviceController = new ORGDeviceWDAController(deviceIP, devicePORT);
         }
 
@@ -60,7 +60,9 @@ class ORGActionsCenter {
 
     static async connectWithController(controller) {
         try {
-            bootbox.dialog({ closeButton: false, message: '<div class="text-center"><h4><i class="fa fa-spin fa-spinner"></i>&nbsp;Connecting to device ...</h4></div>' }); // Progress alert
+
+            await ORGBootbox.progressDialog('Connecting to device ...');
+
             // 1. Open session
             let session = await controller.openSession();
             ORG.dispatcher.dispatch({
@@ -68,7 +70,7 @@ class ORGActionsCenter {
             });
 
             bootbox.hideAll();
-            bootbox.dialog({ closeButton: false, message: '<div class="text-center"><h4><i class="fa fa-spin fa-spinner"></i>&nbsp;Getting device information...</h4></div>' }); // Progress alert
+            await ORGBootbox.progressDialog('Getting device information...');
 
             // 2. Get device info
             ORG.device = await controller.getDeviceInformation();
@@ -124,8 +126,9 @@ class ORGActionsCenter {
     }
 
     static async refreshUITree() {
-        bootbox.dialog({ message: '<div class="text-center"><h4><i class="fa fa-spin fa-spinner"></i>&nbsp;Getting UI information...</h4></div>' });
         try {
+            await ORGBootbox.progressDialog('Getting UI information...');
+
             let controller = ORG.deviceController;
 
             // 1. Orientation
@@ -263,8 +266,10 @@ class ORGActionsCenter {
     }
 
     static async expandScreenUI() {
-        bootbox.dialog({message: '<div class="text-center"><h4><i class="fa fa-spin fa-spinner"></i>&nbsp;Expanding UI elements...</h4></div>'}) // Progress alert
+        //bootbox.dialog({message: '<div class="text-center"><h4><i class="fa fa-spin fa-spinner"></i>&nbsp;Expanding UI elements...</h4></div>'}) // Progress alert
         try {
+            await ORGBootbox.progressDialog('Expanding UI elements...');
+
             let tree = await ORG.deviceController.getElementTree({
                 "status-bar": true,
                 "keyboard": true,

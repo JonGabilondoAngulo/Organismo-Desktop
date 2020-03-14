@@ -40,8 +40,10 @@ module.exports = function(paneSep, contentPanel, leftPane, rightPane, scene) {
         const leftPanelWidth = pageX + kSplitterWidth/2.0;
         const rightPanelWidth = contentRect.width - leftPanelWidth - 20;
         const sceneWidth = leftPanelWidth - kSplitterWidth/2.0 - 15 - 11;
-        leftPane.style.width = leftPanelWidth + 'px';
-        rightPane.style.width = rightPanelWidth + 'px';
+        //leftPane.style.width = leftPanelWidth + 'px';
+        //rightPane.style.width = rightPanelWidth + 'px';
+        leftPane.css("width", leftPanelWidth);
+        rightPane.css("width", rightPanelWidth);
 
         scene.resize({width:sceneWidth, height:scene.sceneSize.height});
 

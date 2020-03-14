@@ -1,27 +1,36 @@
 // This helper makes it easy to handle window resize.
 // It will update renderer and camera when window is resized.
-//
 
 module.exports	= function(renderer, camera, canvas, contentPanel, leftPanel, rightPanel) {
 
-	let callback	= function() {
+	let onResizeCallback	= function() {
 
 		// Canvas
-        const rect = canvas.getBoundingClientRect();
+		//const rect = canvas.getBoundingClientRect();
+		let rect = leftPanel.getBoundingClientRect();
+
+		//console.log("canvas rect:" + JSON.stringify(rect))
+		//console.log("Left rect:" + JSON.stringify(ORG.leftSection.getBoundingClientRect()))
+
 		const canvasTopOffset = rect.top;
-		const canvasBottomOffset = 6;
+		const canvasBottomOffset = 0;
 		const canvasHeight = window.innerHeight - canvasTopOffset - canvasBottomOffset;
-        canvas.style.height = canvasHeight  + 'px'; //otherwise the canvas is not adapting to the renderer area
+		//const gutterWidth = 10;
+
+		leftPanel.style.height = canvasHeight  + 'px';
+
+		rect = leftPanel.getBoundingClientRect();
 
 		// Right Panel
-        const contentRect = contentPanel.getBoundingClientRect();
-        const leftPanelRect = leftPanel.getBoundingClientRect();
-        const rightPanelWidth = contentRect.width - leftPanelRect.width - 20;
-        rightPanel.style.width = rightPanelWidth + 'px';
+        //const contentRect = contentPanel.getBoundingClientRect();
+        //const leftPanelRect = leftPanel.getBoundingClientRect();
+        //const rightPanelWidth = contentRect.width - leftPanelRect.width - gutterWidth;
+        //rightPanel.style.width = rightPanelWidth + 'px';
 
-        //// Renderer & Camera
-        renderer.setSize( canvas.offsetWidth, canvasHeight);
-        camera.aspect = canvas.offsetWidth / canvasHeight;
+        // Renderer & Camera
+        //console.log("canvas.offsetWidth:" + canvas.offsetWidth)
+        renderer.setSize( rect.width, rect.height);
+        camera.aspect = rect.width / rect.height;
 		camera.updateProjectionMatrix();
 
 		// UI Tree
@@ -29,18 +38,15 @@ module.exports	= function(renderer, camera, canvas, contentPanel, leftPanel, rig
         document.getElementById('ui-json-tree-node').style.height = canvasHeight-60 + 'px';
 	}
 
-	//callback(); // ugly to provoke resize now
-
 	// bind the resize event
-	window.addEventListener('resize', callback, false);
+	window.addEventListener('resize', onResizeCallback, false);
 
-	// return .stop() the function to stop watching window resize
 	return {
         resize	: function(){
-            callback();
+			onResizeCallback();
+        },
+        stop	: function(){
+            window.removeEventListener('resize', onResizeCallback);
         }
-        //stop	: function(){
-        //    window.removeEventListener('resize', callback);
-        //}
 	}
 }

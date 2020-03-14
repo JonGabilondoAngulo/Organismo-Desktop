@@ -90,7 +90,8 @@ class ORG3DScene {
     // GET/SET
     //------------------------------------------------------------------------------------------------------------------
     get sceneSize() {
-        return this._THREERenderer.getSize();
+        let size = new THREE.Vector2();
+        return this._THREERenderer.getSize(size);
     }
 
     get THREEScene() {
@@ -828,9 +829,10 @@ class ORG3DScene {
     }
 
     resize(newSize) {
+        let rendererSize = new THREE.Vector2();
         if (this._THREERenderer) {
-            this._THREERenderer.setSize(newSize.width, this._THREERenderer.getSize().height);
-            this._THREECamera.aspect = newSize.width / this._THREERenderer.getSize().height;
+            this._THREERenderer.setSize(newSize.width, this._THREERenderer.getSize(rendererSize).height);
+            this._THREECamera.aspect = newSize.width / this._THREERenderer.getSize(rendererSize).height;
         }
         if (this._THREECSSRenderer) {
             this._THREECSSRenderer.setSize(newSize.width, this._THREECSSRenderer.getSize().height);
@@ -921,7 +923,7 @@ class ORG3DScene {
         this._THREERenderer = this._createWebGLRenderer(rendererCanvasWidth, rendererCanvasHeight);
         this._THREECSSRenderer = this._createCSSRenderer(rendererCanvasWidth, rendererCanvasHeight);
 
-        this._THREEOrbitControls = new THREE.OrbitControls(this._THREECamera, (this._THREECSSRenderer ?this._THREECSSRenderer.domElement :this._THREERenderer.domElement));
+        this._THREEOrbitControls = new THREE.OrbitControls(this._THREECamera, this._THREERenderer.domElement);//(this._THREECSSRenderer ?this._THREECSSRenderer.domElement :this._THREERenderer.domElement));
 
         this._keyboardState = new KeyboardState();
 
