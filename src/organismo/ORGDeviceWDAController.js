@@ -44,9 +44,13 @@ class ORGDeviceWDAController extends ORGDeviceBaseController {
             this.xhr.onload = () => {
                 switch (this.xhr.status) {
                     case 200: {
-                        const response = JSON.parse(this.xhr.responseText);
-                        if (response.status === 0) {
-                            this._sessionInfo = JSON.parse(this.xhr.responseText);
+                        let isValid = true;
+                        const responseTextObject = JSON.parse(this.xhr.responseText);
+                        if (responseTextObject.status && responseTextObject.status != 0) {
+                            isValid = false;
+                        }
+                        if (isValid) {
+                            this._sessionInfo = responseTextObject;
                             resolve(this._sessionInfo);
                         } else {
                             reject(this.xhr.responseText);
@@ -303,11 +307,15 @@ class ORGDeviceWDAController extends ORGDeviceBaseController {
         return new Promise((resolve, reject) => {
             this.xhr.open(method, command, true);
             this.xhr.onload = () => {
-                let response = JSON.parse(this.xhr.responseText);
-                if (response.status === 0) {
-                    resolve(response.value);
+                let isValid = true;
+                const responseTextObject = JSON.parse(this.xhr.responseText);
+                if (responseTextObject.status && responseTextObject.status != 0) {
+                    isValid = false;
+                }
+                if (isValid) {
+                    resolve(responseTextObject.value);
                 } else {
-                    reject(response.value);
+                    reject(this.xhr.responseText);
                 }
             }
             this.xhr.onerror = () => {

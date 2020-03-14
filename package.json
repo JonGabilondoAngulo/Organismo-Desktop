@@ -1,7 +1,7 @@
 {
   "name": "Organismo-Desktop",
   "productName": "Organismo Desktop",
-  "version": "0.0.1",
+  "version": "0.1.2",
   "description": "Organismo Desktop",
   "main": "./src/main-process/main.js",
   "repository": "https://github.com/JonGabilondoAngulo/Organismo-Desktop",
