@@ -7,7 +7,7 @@ const path = require('path')
 const config = require(path.join(__dirname, '../../package.json'))
 const OrganismoWindow = require('./org-window')
 
-app.setName(config.productName)
+app.name = config.productName
 var mainWindow = null
 app.on('ready', function () {
     mainWindow = new OrganismoWindow(app)

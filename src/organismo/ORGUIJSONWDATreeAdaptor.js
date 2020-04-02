@@ -55,7 +55,7 @@ class ORGUIJSONWDATreeAdaptor {
             if (this.ignoreNodeKey(key)) {
                 continue;
             }
-            if (key == "rect") {
+            if (key == "rect" || key == "visibleRect") {
                 description += "<b>" + key + "</b>:&nbsp" + JSON.stringify(node.rect) + "<br>";
             } else {
                 description += "<b>" + key + "</b>:&nbsp" + node[key] + "<br>";

@@ -177,7 +177,7 @@ class ORGFluxStore extends FluxUtils.Store {
                         bootbox.alert("Error connecting to idevicecontrolproxy.\nMake sure the proxy is running.\nRead about it @ https://github.com/JonGabilondoAngulo/idevicecontrolproxy");
                     }
                 }
-            }
+            } break;
 
             //************************************************************
             // LAB

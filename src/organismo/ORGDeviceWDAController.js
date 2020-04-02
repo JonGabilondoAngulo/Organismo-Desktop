@@ -63,11 +63,6 @@ class ORGDeviceWDAController extends ORGDeviceBaseController {
                         reject(this.xhr.statusText);
                     }
                 }
-                if (this.xhr.status === 200) {
-
-                } else {
-                    reject(this.xhr.statusText);
-                }
             }
             this.xhr.onerror = () => {
                 reject(this.xhr.statusText);
@@ -80,7 +75,8 @@ class ORGDeviceWDAController extends ORGDeviceBaseController {
                     reject(new ORGError(ORGERR.ERR_CONNECTION_NOT_FOUND, "No connection found at given IP & PORT."));
                 }
             }
-            this.xhr.send(JSON.stringify({desiredCapabilities:{bundleId:'com.apple.mobilephone'}}));
+            this.xhr.send(JSON.stringify({desiredCapabilities:{bundleId:'com.apple.mobilephone'}, capabilities:{bundleId:'com.apple.mobilephone'}
+            })); // Start with a simple desired capabilities. Send both keys for backwards compatibility.
         })
     }
 
