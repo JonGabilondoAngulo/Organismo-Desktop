@@ -15,7 +15,7 @@ module.exports =
             this._devices = [];
             this._objects = [];
             this._targets = { table: [], sphere: [], helix: [], grid: [] };
-            this._deviceCount = 150;
+            this._deviceCount = 156;
         }
 
         show() {
