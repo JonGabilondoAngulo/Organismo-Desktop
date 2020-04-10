@@ -25,12 +25,9 @@ require("bootstrap-slider");
 
 // THREE JS
 const THREE = require('three')
-THREE.OrbitControls = require('three-orbitcontrols')
-THREE.TransformControls = require('threejs-transformcontrols')
 THREE.TextTexture = require('three.texttexture')
 const TWEEN = require('@tweenjs/tween.js')
 const bootbox = require('bootbox')
-require('three-obj-mtl-loader')
 
 const Flux = require('flux');
 const FluxUtils = require('flux/utils');
@@ -43,6 +40,12 @@ const ORGSystemInfoManager = require('./src/organismo/ORGSystemInfoManager')
 const { ORGUIJSONTreeManager, ORGJSONTreeType } = require('./src/organismo/ORGUIJSONTreeManager')
 const ORGSplitterResize = require('./src/organismo/ORG.SplitterResize')
 const ORGWindowResize = require('./src/organismo/ORG.WindowResize')
+require('./node_modules/three/examples/js/renderers/CSS3DRenderer.js')
+require('./node_modules/three/examples/js/controls/OrbitControls.js')
+require('./node_modules/three/examples/js/controls/TransformControls.js')
+require('./node_modules/three/examples/js/loaders/OBJLoader.js')
+require('./node_modules/three/examples/js/loaders/MTLLoader.js')
+
 
 ORG.contentWrapper = document.getElementById('content-wrapper');
 ORG.leftSection = document.getElementById('3d-canvas-col');

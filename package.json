@@ -25,11 +25,7 @@
     "popper.js": "^1.14.3",
     "react": "^15.0.2",
     "three": "^0.110.0",
-    "three-css3drenderer": "^1.0.1",
-    "three-obj-mtl-loader": "^1.0.3",
-    "three-orbitcontrols": "^2.1.2",
-    "three.texttexture": "^18.3.19",
-    "threejs-transformcontrols": "^0.83.0"
+    "three.texttexture": "^18.3.19"
   },
   "scripts": {
     "start": "electron .",

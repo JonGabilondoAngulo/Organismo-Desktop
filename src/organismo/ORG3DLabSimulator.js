@@ -3,7 +3,6 @@
     Spatial representation inspired by threejs examples.
 */
 
-const { CSS3DObject, CSS3DSprite, CSS3DRenderer } = require('three-css3drenderer')
 const { ORGDevice, ORGDeviceORIENTATION } = require('./ORGDevice')
 const ORG3DSceneFloor = require('./ORG3DSceneFloor')
 
@@ -104,7 +103,7 @@ module.exports =
                 details.innerHTML = device.model + '<br>' + device.productName;
                 element.appendChild( details );
 
-                var object = new CSS3DObject( element );
+                var object = new THREE.CSS3DObject( element );
                 object.position.x = Math.random() * 4000 - 2000;
                 object.position.y = Math.random() * 4000 - 2000;
                 object.position.z = Math.random() * 4000 - 2000;
