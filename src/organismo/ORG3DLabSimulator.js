@@ -5,13 +5,15 @@
 
 const { CSS3DObject, CSS3DSprite, CSS3DRenderer } = require('three-css3drenderer')
 const { ORGDevice, ORGDeviceORIENTATION } = require('./ORGDevice')
+const ORG3DSceneFloor = require('./ORG3DSceneFloor')
 
 module.exports =
 
      class ORG3DLabSimulator {
 
-        constructor(cssScene) {
+        constructor(cssScene, scene) {
             this._THREECSSScene = cssScene;
+            this._THREEScene = scene;
             this._devices = [];
             this._objects = [];
             this._targets = { table: [], sphere: [], helix: [], grid: [] };
@@ -19,8 +21,14 @@ module.exports =
         }
 
         show() {
-            this._createDevices(this._deviceCount);
-            this._showDevices();
+            //this._createDevices(this._deviceCount);
+            //this._showDevices();
+
+            this._createFloor(this._THREEScene);
+            this._createRacks();
+
+            //this._createPlaneWorld({ width:200, height:100 }, new THREE.Vector3(0, 0, 0));
+            //this._createBar( this._THREEScene, .2, 6);
         }
 
         destroy() {
@@ -213,5 +221,89 @@ module.exports =
 
          }
 
-    }
+
+         _createPlaneWorld(size, position) {
+
+             let texture = new THREE.TextureLoader().load( 'assets/img/worldmap-texture.png' );
+             let geometry = new THREE.PlaneBufferGeometry(size.width, size.height, 1, 1);
+             geometry.dynamic = true;
+             let material = new THREE.MeshBasicMaterial({ map : texture , color: 0xffffff, side: THREE.DoubleSide, transparent: true});
+             let worldPlane = new THREE.Mesh(geometry, material);
+             worldPlane.position.copy(position);
+             worldPlane.name = "plane-world";
+             worldPlane.applyMatrix(new THREE.Matrix4().makeRotationX(THREE.Math.degToRad(-90)));
+             worldPlane.geometry.computeBoundingBox();
+
+             this._THREEScene.add(worldPlane);
+             return worldPlane;
+         }
+
+         _createFloor(threeScene) {
+             const floorSize = 1000;
+             const tileSize = 100;
+             return new ORG3DSceneFloor(floorSize, tileSize, true, threeScene, -1.0);
+         }
+
+         _createBar(threeScene, radius, height) {
+             const kSegments = 24;
+             const kOpacity = 1.0;
+             const kMetalness = 0.7;
+
+             var geometry = new THREE.CylinderGeometry( radius, radius, height, kSegments);
+             var material = new THREE.MeshStandardMaterial({ color: 0xEE1100, transparent: true, opacity: kOpacity, metalness: kMetalness });
+             //var material = new THREE.MeshPhongMaterial({ color: 0xEE1100, flatShading: true });
+
+             for (let x = -10; x <= 10; x += 0.5) {
+                 let bar = new THREE.Mesh( geometry, material );
+                 bar.position.y = height / 2.0;
+                 bar.position.x = x;
+                 this._THREEScene.add(bar);
+             }
+         }
+
+         _createRacks() {
+             const mtlLoader = new THREE.MTLLoader();
+             mtlLoader.setPath('assets/3DModels/ServerV2console/');
+             mtlLoader.load('ServerV2+console.mtl', (materials) => {
+                 materials.preload();
+                 let objLoader = new THREE.OBJLoader();
+                 objLoader.setMaterials(materials);
+                 objLoader.setPath( 'assets/3DModels/ServerV2console/' );
+                 objLoader.load('ServerV2+console.obj', (obj) => {
+                     //this._THREEScene.add(obj);
+
+                     const kDistance = 8.0;
+                     const kDistanceZ = 10.0;
+                     for (let i=0; i<20; i++) {
+                         let clone = obj.clone();
+                         clone.position.set( kDistance*i, 0.0, 0.0);
+                         clone.rotation.set( 0.0, THREE.Math.degToRad( -90 ), 0.0 );
+                         this._THREEScene.add(clone);
+
+                         clone = obj.clone();
+                         clone.position.set( kDistance*i, 0.0, -2.2);
+                         clone.rotation.set( 0.0, THREE.Math.degToRad( 90 ), 0.0 );
+                         this._THREEScene.add(clone);
+
+
+                         //for (let j=0; j<20; j++) {
+                         //    let clone = obj.clone();
+                         //    clone.position.set( kDistance*i, 0.0, kDistanceZ*j);
+                         //    clone.rotation.set( 0.0, THREE.Math.degToRad( -90 ), 0.0 );
+                         //    this._THREEScene.add(clone);
+                         //
+                         //    clone = obj.clone();
+                         //    clone.position.set( kDistance*i, 0.0, kDistanceZ*j-2.2);
+                         //    clone.rotation.set( 0.0, THREE.Math.degToRad( 90 ), 0.0 );
+                         //    this._THREEScene.add(clone);
+                         //
+                         //}
+                     }
+                 });
+             });
+
+         }
+
+
+     }
 

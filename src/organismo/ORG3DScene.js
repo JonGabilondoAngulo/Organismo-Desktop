@@ -867,7 +867,7 @@ class ORG3DScene {
         if (!this._labSimulator) {
             this._removeFloor();
 
-            this._labSimulator = new ORG3DLabSimulator(this._THREECSSScene);
+            this._labSimulator = new ORG3DLabSimulator(this._THREECSSScene, this._THREEScene);
             this._labSimulator.show();
         } else {
             this._labSimulator.destroy();

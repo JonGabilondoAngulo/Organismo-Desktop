@@ -26,7 +26,6 @@
     "react": "^15.0.2",
     "three": "^0.110.0",
     "three-css3drenderer": "^1.0.1",
-    "three-obj-loader": "^1.1.3",
     "three-obj-mtl-loader": "^1.0.3",
     "three-orbitcontrols": "^2.1.2",
     "three.texttexture": "^18.3.19",
