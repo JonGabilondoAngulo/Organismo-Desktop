@@ -182,8 +182,14 @@ class ORGFluxStore extends FluxUtils.Store {
             //************************************************************
             // LAB
             //************************************************************
-            case 'enter-lab-mode': {
-                ORG.scene.enterLabMode();
+            case 'show-lab-devices': {
+                ORG.scene.enterLabMode(payload.actionType);
+            } break;
+            case 'show-lab-racks': {
+                ORG.scene.enterLabMode(payload.actionType);
+            } break;
+            case 'show-lab-world': {
+                ORG.scene.enterLabMode(payload.actionType);
             } break;
             case 'lab-mode-table':
             case 'lab-mode-sphere':

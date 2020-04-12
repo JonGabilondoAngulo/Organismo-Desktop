@@ -32,7 +32,9 @@ ORG.UI.dropdownTravelMode = $('#travel-mode-dropdown');
 ORG.UI.sliderTreeLayersDistance = $('#ex1');
 ORG.UI.sliderTreeLayersRange = $('#ex2');
 ORG.UI.refreshUITree = $('#ui-tree-refresh');
-ORG.UI.enterLabMode = $('#enter-lab-mode');
+ORG.UI.enterLabMode = $('#show-lab-devices');
+ORG.UI.enterLabModeRacks = $('#show-lab-racks');
+ORG.UI.enterLabModeWorldView = $('#show-lab-world');
 ORG.UI.labModeTable = $('#lab-mode-table');
 ORG.UI.labModeSphere = $('#lab-mode-sphere');
 ORG.UI.labModeHelix = $('#lab-mode-helix');
@@ -43,7 +45,19 @@ const ORGActionsCenter = require('./src/organismo/ORGActionsCenter')
 // Lab
 ORG.UI.enterLabMode.click( () => {
     ORG.dispatcher.dispatch({
-        actionType: 'enter-lab-mode'
+        actionType: 'show-lab-devices'
+    });
+})
+
+ORG.UI.enterLabModeRacks.click( () => {
+    ORG.dispatcher.dispatch({
+        actionType: 'show-lab-racks'
+    });
+})
+
+ORG.UI.enterLabModeWorldView.click( () => {
+    ORG.dispatcher.dispatch({
+        actionType: 'show-lab-world'
     });
 })
 

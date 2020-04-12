@@ -10,24 +10,73 @@ module.exports =
 
      class ORG3DLabSimulator {
 
-        constructor(cssScene, scene) {
-            this._THREECSSScene = cssScene;
-            this._THREEScene = scene;
-            this._devices = [];
-            this._objects = [];
-            this._targets = { table: [], sphere: [], helix: [], grid: [] };
-            this._deviceCount = 156;
+        constructor(scene, cssScene, webglScene) {
+            this._scene = scene
+            this._THREECSSScene = cssScene
+            this._THREEScene = webglScene
+            this._racksFloor = null
+            this._floor = null
+            this._racks = []
+            this._worldPlane = null
+            this._worldBars = null
+            this._initializeDevices()
         }
 
-        show() {
-            //this._createDevices(this._deviceCount);
-            //this._showDevices();
+        showDevices() {
+            this._removeLabObjects()
+            this._floor = this._createFloor(this._scene.THREEScene, 70000, 100, -4000)
+            this._createDevices(this._deviceCount);
+            this._showDevices();
+            this._resetCameraPosition(new THREE.Vector3(0, 400, 7000), new THREE.Vector3(0, 400, 0), 2000)
+        }
 
-            this._createFloor(this._THREEScene);
-            this._createRacks();
+        hideDevices() {
+            if (this._floor) {
+                this._floor.remove()
+                this._floor = null
+            }
+            this._initializeDevices()
+            this._THREECSSScene.remove.apply(this._THREECSSScene, this._THREECSSScene.children);
+        }
 
-            //this._createPlaneWorld({ width:200, height:100 }, new THREE.Vector3(0, 0, 0));
-            //this._createBar( this._THREEScene, .2, 6);
+        showRacks() {
+            this._removeLabObjects()
+            this._racksFloor = this._createFloor(this._THREEScene, 1000, 100, -1)
+            this._racks = this._createRacks()
+            this._resetCameraPosition(new THREE.Vector3(0, 20, 200), new THREE.Vector3(0, 0, 0), 2000)
+        }
+
+        hideRacks() {
+            if (this._racksFloor) {
+                this._racksFloor.remove()
+                this._racksFloor = null
+            }
+            if (this._racks) {
+                this._THREEScene.remove.apply(this._THREEScene, this._racks)
+                this._racks = []
+            }
+        }
+
+        showWorldView() {
+            this._removeLabObjects()
+            this._worldPlane = this._createPlaneWorld({ width:200, height:100 }, new THREE.Vector3(0, 0, 0))
+            this._worldBars = this._createBars( this._THREEScene, .3,
+                [new THREE.Vector3(0, 12, 0), new THREE.Vector3(-10, 10, -10), new THREE.Vector3(-20, 5, -30),
+                    // North Am.
+                    new THREE.Vector3(-40, 20, -30), new THREE.Vector3(-55, 25, -10), new THREE.Vector3(-58, 12, -15),
+                    new THREE.Vector3(-68, 22, -10), new THREE.Vector3(-62, 18, -8)])
+            this._resetCameraPosition(new THREE.Vector3(0, 60, 90), new THREE.Vector3(0, 0, 0), 2000)
+        }
+
+        hideWorldView() {
+            if (this._worldPlane) {
+                this._THREEScene.remove(this._worldPlane)
+                this._worldPlane = null
+            }
+            if (this._worldBars) {
+                this._THREEScene.remove.apply(this._THREEScene, this._worldBars)
+                this._worldBars = []
+            }
         }
 
         destroy() {
@@ -37,18 +86,31 @@ module.exports =
         setMode(mode) {
             switch (mode) {
                 case 'lab-mode-table' : {
-                    this._transform( this._objects, this._targets.table, 2000 );
+                    this._transform( this._objects, this._targets.table, 2000 )
                 } break;
                 case 'lab-mode-sphere' : {
-                    this._transform( this._objects, this._targets.sphere, 2000 );
+                    this._transform( this._objects, this._targets.sphere, 2000 )
                 } break;
                 case 'lab-mode-helix' : {
-                    this._transform( this._objects, this._targets.helix, 2000 );
+                    this._transform( this._objects, this._targets.helix, 2000 )
                 } break;
                 case 'lab-mode-grid' : {
-                    this._transform( this._objects, this._targets.grid, 2000 );
+                    this._transform( this._objects, this._targets.grid, 2000 )
                 } break;
             }
+        }
+
+        _initializeDevices() {
+            this._deviceCount = 156
+            this._devices = [];
+            this._objects = [];
+            this._targets = { table: [], sphere: [], helix: [], grid: [] };
+        }
+
+        _removeLabObjects() {
+            this.hideDevices()
+            this.hideWorldView()
+            this.hideRacks()
         }
 
         _createDevices(count) {
@@ -76,7 +138,7 @@ module.exports =
                 rows++;
             }
 
-            for ( var i = 0; i < this._deviceCount;  i++) {
+            for ( let i = 0; i < this._deviceCount;  i++) {
 
                 var device = this._devices[i];
 
@@ -90,11 +152,8 @@ module.exports =
                 element.appendChild( name );
 
                 var screenshot = document.createElement( 'div' );
-                if (Math.floor(Math.random() + 0.5)) {
-                    screenshot.className = 'screenshot1';
-                } else {
-                    screenshot.className = 'screenshot2';
-                }
+                const kMaxScreenshots = 9;
+                screenshot.className = 'screenshot' + (Math.floor(Math.random() * kMaxScreenshots) + 1);
                 screenshot.textContent = "";
                 element.appendChild( screenshot );
 
@@ -118,8 +177,8 @@ module.exports =
                 var object = new THREE.Object3D();
                 const deviceWidth = device.screenSize.width;
                 const deviceHeight = device.screenSize.height;
-                const spaceX = 100;
-                const spaceY = 50;
+                const spaceX = 120;
+                const spaceY = 70;
                 object.position.x = currentCol*(deviceWidth+spaceX) - (cols*deviceWidth)/2 - ((cols-1)*spaceX)/2 ;
                 object.position.y = -currentRow*(deviceHeight+spaceY) + (rows*deviceHeight)/2 - ((rows-1)*spaceY)/2 ;
 
@@ -131,7 +190,7 @@ module.exports =
 
             var vector = new THREE.Vector3();
 
-            for ( var i = 0, l = this._objects.length; i < l; i ++ ) {
+            for ( let i = 0, l = this._objects.length; i < l; i ++ ) {
 
                 const phi = Math.acos( -1 + ( 2 * i ) / l );
                 const theta = Math.sqrt( l * Math.PI ) * phi;
@@ -153,7 +212,7 @@ module.exports =
 
             var vector = new THREE.Vector3();
 
-            for ( var i = 0, l = this._objects.length; i < l; i ++ ) {
+            for ( let i = 0, l = this._objects.length; i < l; i ++ ) {
 
                 const phi = i * 0.275 + Math.PI;
 
@@ -175,7 +234,7 @@ module.exports =
 
             // grid
 
-            for ( var i = 0; i < this._objects.length; i ++ ) {
+            for ( let i = 0; i < this._objects.length; i ++ ) {
 
                 var object = new THREE.Object3D();
 
@@ -196,7 +255,7 @@ module.exports =
              const _this = this;
              TWEEN.removeAll();
 
-             for ( var i = 0; i < objects.length; i ++ ) {
+             for ( let i = 0; i < objects.length; i ++ ) {
 
                  var object = objects[ i ];
                  var target = targets[ i ];
@@ -222,7 +281,6 @@ module.exports =
 
 
          _createPlaneWorld(size, position) {
-
              let texture = new THREE.TextureLoader().load( 'assets/img/worldmap-texture.png' );
              let geometry = new THREE.PlaneBufferGeometry(size.width, size.height, 1, 1);
              geometry.dynamic = true;
@@ -237,72 +295,93 @@ module.exports =
              return worldPlane;
          }
 
-         _createFloor(threeScene) {
-             const floorSize = 1000;
-             const tileSize = 100;
-             return new ORG3DSceneFloor(floorSize, tileSize, true, threeScene, -1.0);
+         _createFloor(threeScene, floorSize, tileSize, yPos) {
+             return new ORG3DSceneFloor(floorSize, tileSize, true, threeScene, yPos)
          }
 
-         _createBar(threeScene, radius, height) {
-             const kSegments = 24;
-             const kOpacity = 1.0;
-             const kMetalness = 0.7;
+         _createBars(threeScene, radius, positions) {
+             var worldBars = []
+             const kSegments = 24
+             const kOpacity = 1.0
+             const kMetalness = 0.7
 
-             var geometry = new THREE.CylinderGeometry( radius, radius, height, kSegments);
-             var material = new THREE.MeshStandardMaterial({ color: 0xEE1100, transparent: true, opacity: kOpacity, metalness: kMetalness });
-             //var material = new THREE.MeshPhongMaterial({ color: 0xEE1100, flatShading: true });
+             var material = new THREE.MeshStandardMaterial({ color: 0xEE1100, transparent: false, opacity: kOpacity, metalness: kMetalness })
 
-             for (let x = -10; x <= 10; x += 0.5) {
-                 let bar = new THREE.Mesh( geometry, material );
-                 bar.position.y = height / 2.0;
-                 bar.position.x = x;
-                 this._THREEScene.add(bar);
+             for (let position of positions) {
+                 let geometry = new THREE.CylinderGeometry( radius, radius, position.y, kSegments)
+                 let bar = new THREE.Mesh( geometry, material )
+                 bar.position.y = position.y / 2.0
+                 bar.position.x = position.x
+                 bar.position.z = position.z
+                 this._THREEScene.add(bar)
+                 worldBars.push(bar)
+
              }
+
+             //for (let x = -10; x <= 10; x += 0.5) {
+             //    let bar = new THREE.Mesh( geometry, material )
+             //    bar.position.y = height / 2.0
+             //    bar.position.x = x
+             //    this._THREEScene.add(bar)
+             //    worldBars.push(bar)
+             //}
+             return worldBars
          }
 
          _createRacks() {
-             const mtlLoader = new THREE.MTLLoader();
-             mtlLoader.setPath('assets/3DModels/ServerV2console/');
+             var racks = []
+             const mtlLoader = new THREE.MTLLoader()
+             mtlLoader.setPath('assets/3DModels/ServerV2console/')
              mtlLoader.load('ServerV2+console.mtl', (materials) => {
                  materials.preload();
                  let objLoader = new THREE.OBJLoader();
                  objLoader.setMaterials(materials);
-                 objLoader.setPath( 'assets/3DModels/ServerV2console/' );
+                 objLoader.setPath( 'assets/3DModels/ServerV2console/' )
                  objLoader.load('ServerV2+console.obj', (obj) => {
                      //this._THREEScene.add(obj);
 
-                     const kDistance = 8.0;
-                     const kDistanceZ = 10.0;
-                     for (let i=0; i<20; i++) {
-                         let clone = obj.clone();
-                         clone.position.set( kDistance*i, 0.0, 0.0);
-                         clone.rotation.set( 0.0, THREE.Math.degToRad( -90 ), 0.0 );
-                         this._THREEScene.add(clone);
+                     const kDistanceX = 8.0
+                     const kDistanceZ = 10.0
+                     const kRacksPerRow = 50
+                     for (let i= -kRacksPerRow/2; i<kRacksPerRow/2; i++) {
+                         for (let j= -kRacksPerRow/2; j<kRacksPerRow/2; j++) {
+                             let clone = obj.clone()
+                             clone.position.set( kDistanceX*i, 0.0, kDistanceZ*j)
+                             clone.rotation.set( 0.0, THREE.Math.degToRad( -90 ), 0.0 )
+                             this._THREEScene.add(clone)
+                             racks.push(clone)
 
-                         clone = obj.clone();
-                         clone.position.set( kDistance*i, 0.0, -2.2);
-                         clone.rotation.set( 0.0, THREE.Math.degToRad( 90 ), 0.0 );
-                         this._THREEScene.add(clone);
-
-
-                         //for (let j=0; j<20; j++) {
-                         //    let clone = obj.clone();
-                         //    clone.position.set( kDistance*i, 0.0, kDistanceZ*j);
-                         //    clone.rotation.set( 0.0, THREE.Math.degToRad( -90 ), 0.0 );
-                         //    this._THREEScene.add(clone);
-                         //
-                         //    clone = obj.clone();
-                         //    clone.position.set( kDistance*i, 0.0, kDistanceZ*j-2.2);
-                         //    clone.rotation.set( 0.0, THREE.Math.degToRad( 90 ), 0.0 );
-                         //    this._THREEScene.add(clone);
-                         //
-                         //}
+                             clone = obj.clone()
+                             clone.position.set( kDistanceX*i, 0.0, kDistanceZ*j-2.2)
+                             clone.rotation.set( 0.0, THREE.Math.degToRad( 90 ), 0.0 )
+                             this._THREEScene.add(clone)
+                             racks.push(clone)
+                         }
                      }
-                 });
-             });
-
+                 })
+             })
+             return racks
          }
 
+         _resetCameraPosition(toPosition, lookAt, duration) {
+             const _this = this;
+             new TWEEN.Tween(this._scene.THREECamera.position).to({
+                 x: toPosition.x,
+                 y: toPosition.y,
+                 z: toPosition.z}, duration)
+                 .easing(TWEEN.Easing.Quadratic.InOut)
+                 .onComplete(() => {
+                  }).start();
+
+             // TWEEN camera lookAt. But we can't do it setting camera.lookAt ! Due to collision with OrbitControls !
+             // We must use the OrbitControl.target instead.
+             new TWEEN.Tween(_this._scene.THREEOrbitControls.target).to({
+                 x: lookAt.x,
+                 y: lookAt.y,
+                 z: lookAt.z}, duration)
+                 .easing(TWEEN.Easing.Quadratic.InOut)
+                 .start();
+         }
 
      }
 

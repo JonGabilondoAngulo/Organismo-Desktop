@@ -123,6 +123,10 @@ class ORG3DScene {
         return this._THREECamera;
     }
 
+    get THREEOrbitControls() {
+        return this._THREEOrbitControls;
+    }
+
     get THREEDeviceAndScreenGroup() {
         //return this._THREEDeviceAndScreenGroup;
         return this._device.bodyAndScreenGroup;
@@ -862,15 +866,22 @@ class ORG3DScene {
         }
     }
 
-    enterLabMode() {
+    enterLabMode(actionType) {
         if (!this._labSimulator) {
             this._removeFloor();
-
-            this._labSimulator = new ORG3DLabSimulator(this._THREECSSScene, this._THREEScene);
-            this._labSimulator.show();
-        } else {
+            this._labSimulator = new ORG3DLabSimulator(this, this._THREECSSScene, this._THREEScene);
+        }
+        /*else {
             this._labSimulator.destroy();
             this._labSimulator = null;
+        }*/
+
+        if (actionType == 'show-lab-devices') {
+            this._labSimulator.showDevices();
+        } else if (actionType == 'show-lab-racks') {
+            this._labSimulator.showRacks();
+        } else if (actionType == 'show-lab-world') {
+            this._labSimulator.showWorldView();
         }
     }
 
@@ -915,7 +926,7 @@ class ORG3DScene {
 
         this._THREEScene = new THREE.Scene();
         this._THREECSSScene = new THREE.Scene();
-        this._THREECamera = new THREE.PerspectiveCamera(65, (rendererCanvasWidth / rendererCanvasHeight), 0.001, 10000);
+        this._THREECamera = new THREE.PerspectiveCamera(65, (rendererCanvasWidth / rendererCanvasHeight), 0.001, 100000);
 
         this._THREERenderer = this._createWebGLRenderer(rendererCanvasWidth, rendererCanvasHeight);
         this._THREECSSRenderer = this._createCSSRenderer(rendererCanvasWidth, rendererCanvasHeight);
@@ -1024,35 +1035,35 @@ class ORG3DScene {
     _createLights() {
         let light;
 
-        light = new THREE.SpotLight(0xaaaaaa);
+        light = new THREE.SpotLight(0xaaaaaa, 0.1);
         light.position.set(500,-500,500);
         this._THREEScene.add(light);
-
-        light = new THREE.SpotLight(0xaaaaaa);
+        //
+        light = new THREE.SpotLight(0xaaaaaa, 0.1);
         light.position.set(500,500,500);
         this._THREEScene.add(light);
 
-        light = new THREE.SpotLight(0xaaaaaa);
+        light = new THREE.SpotLight(0xaaaaaa, 0.1);
         light.position.set(-500,-500,-500);
         this._THREEScene.add(light);
 
-        light = new THREE.SpotLight(0xaaaaaa);
+        light = new THREE.SpotLight(0xaaaaaa, 0.1);
         light.position.set(-500,500,-500);
         this._THREEScene.add(light);
 
-        //light = new THREE.DirectionalLight(0xaaaaaa, 0.5 );
-        //light.position.copy( new THREE.Vector3(0.0, 1.0, -1.0));
+        //light = new THREE.DirectionalLight(0xaaaaaa, 0.1 );
+        //light.position.set(1,1,0.5);
         //this._THREEScene.add(light);
         //
         //light = new THREE.DirectionalLight(0xaaaaaa, 0.5 );
         //light.position.copy( new THREE.Vector3(1.0, 1.0, 1.0));
         //this._THREEScene.add(light);
 
-        //light = new THREE.HemisphereLight( );
-        //this._THREEScene.add(light);
-        //
-        //light = new THREE.AmbientLight(0xffffff, 0.9);
-        //this._THREEScene.add(light);
+        light = new THREE.HemisphereLight( 0xffffff, 0xffffff, 0.2);
+        this._THREEScene.add(light);
+
+        light = new THREE.AmbientLight(0xffffff, 1.0);
+        this._THREEScene.add(light);
     }
 
     _adjustLocationMarkerPosition() {

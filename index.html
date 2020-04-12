@@ -149,7 +149,7 @@
 
                                         <!--<div class="container-fluid">-->
 
-                                        <button id='expand-button' class="ui-button ui-widget ui-corner-all not-focusable">Expand</button>
+                                        <button id='expand-button' class="btn btn-primary btn-sm not-focusable">Expand</button>
                                         <br/>
 
                                         <div class='smallCheckboxDiv'>
@@ -216,7 +216,7 @@
                                         <span>Layers Range:</span> &nbsp;  <input id="ex2" data-slider-id='ex1Slider' type="text" data-slider-min="0" data-slider-max="100" data-slider-step="1" data-slider-value="0" data-slider-tooltip="hide"/>
                                         </div>
 
-                                        <button id='show-actors-button' class="ui-button ui-widget ui-corner-all not-focusable">Show UI Actors</button>
+                                        <button id='show-actors-button' class="btn btn-primary btn-sm not-focusable">Show UI Actors</button>
                                         <br/>
 
                                     </div>
@@ -229,7 +229,7 @@
                                     <div class="col-sm-8" >
                                         <div class="panel " style="height: 44px; padding:2px; " >
                                             <div class="panel-body" style="height: 44px; padding:2px; " >
-                                                <label type="button" class="btn btn-primary" id='ui-tree-refresh'>Refresh</label>
+                                                <label type="button" class="btn btn-primary btn-sm" id='ui-tree-refresh'>Refresh</label>
                                             </div>
                                         </div>
                                         <div id="ui-json-tree" style="overflow-y: auto; overflow-x: auto"></div>
@@ -246,16 +246,79 @@
                             </div>
                         </div>
                         <div class="tab-pane" id="tab-lab">
-                            <div class="panel-body" style="height: 44px; padding:4px; " >
-                                <label type="button" class="btn btn-primary" id='enter-lab-mode'>Enter Lab</label>
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <h3 class="panel-title">Devices</h3>
+                                </div>
+                                <div class="panel-body">
+                                    <label type="button" class="btn btn-primary btn-sm" id='show-lab-devices'>Show</label>
+
+                                    <div class="btn-group">
+                                        <button class="btn btn-default btn-sm" type="button">Table</button>
+                                        <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            <span class="caret"></span>
+                                            <span class="sr-only">Toggle Dropdown</span>
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            <li><a href="#" id='lab-mode-table'>Table</a></li>
+                                            <li><a href="#" id='lab-mode-sphere'>Sphere</a></li>
+                                            <li><a href="#" id='lab-mode-helix'>Helix</a></li>
+                                            <li><a href="#" id='lab-mode-grid'>Grid</a></li>
+                                        </ul>
+                                    </div>
+
+                                </div>
                             </div>
 
-                            <div class="btn-group" role="group" aria-label="...">
-                                <button type="button" class="btn btn-group-sm" id='lab-mode-table'>Table</button>
-                                <button type="button" class="btn btn-group-sm" id='lab-mode-sphere'>Sphere</button>
-                                <button type="button" class="btn btn-group-sm" id='lab-mode-helix'>Helix</button>
-                                <button type="button" class="btn btn-group-sm" id='lab-mode-grid'>Grid</button>
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <h3 class="panel-title">Lab</h3>
+                                </div>
+                                <div class="panel-body">
+                                    <label type="button" class="btn btn-primary btn-sm" id='show-lab-racks'>Show</label>
+
+
+                                <!-- Small button group -->
+                                <div class="btn-group">
+                                    <button class="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        New York <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li><a href="#">New York</a></li>
+                                        <li><a href="#">London</a></li>
+                                        <li><a href="#">Tokyo</a></li>
+                                        <li><a href="#">Melbourne</a></li>
+                                    </ul>
+                                </div>
+
+                                </div>
+
+
                             </div>
+
+
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <h3 class="panel-title">World View</h3>
+                                </div>
+                                <div class="panel-body">
+                                    <label type="button" class="btn btn-primary btn-sm" id='show-lab-world'>Show</label>
+                                </div>
+                            </div>
+
+<!--                            <div class="panel-body" style="height: 44px; padding:4px; " >-->
+<!--                                <label type="button" class="btn btn-primary btn-sm" id='enter-lab-mode'>Devices</label>-->
+<!--                            </div>-->
+
+<!--                            <div class="panel-body" style="height: 44px; padding:4px; " >-->
+<!--                                <label type="button" class="btn btn-primary btn-sm" id='enter-lab-mode'>Racks Lab</label>-->
+<!--                            </div>-->
+
+<!--                            <div class="panel-body" style="height: 44px; padding:4px; " >-->
+<!--                                <label type="button" class="btn btn-primary btn-sm" id='enter-lab-mode'>World View</label>-->
+<!--                            </div>-->
+
+
                         </div>
                     </div>
                 </div>
