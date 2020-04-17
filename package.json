@@ -14,7 +14,7 @@
   "dependencies": {
     "@tweenjs/tween.js": "^17.2.0",
     "bootbox": "4.4.0",
-    "bootstrap": "3.3.7",
+    "bootstrap": "3.4.1",
     "bootstrap-slider": "^10.0.2",
     "electron-is-dev": "^0.3.0",
     "flux": "^3.1.3",
